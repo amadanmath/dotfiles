@@ -1,0 +1,86 @@
+# Thanks to https://codeberg.org/scy/dotfiles/src/branch/main/.bashrc
+
+# This file will be sourced by every interactive bash and, since it's sourced in ~/.bash_profile, also by login bashes.
+
+# If this is not an interactive shell, do nothing.
+case $- in
+  *i*)
+    ;;
+  *)
+    return
+    ;;
+esac
+
+# First, if there's a global bashrc, load it.
+[ -f /etc/bashrc ] && . /etc/bashrc
+
+
+# Some hosts have a FQDN as their $HOSTNAME. This sucks in prompts etc.
+# Let's make sure that we have a version with _just_ the first part.
+export SHORTHOSTNAME="${HOSTNAME%%.*}"
+
+# Set a custom PATH by modifying the default one. However, keep a copy of the default one in order to not keep prefixing
+# it when nesting shells etc.
+[ -z "$MASTERPATH" ] && export MASTERPATH="$PATH"
+export PATH="$HOME/.local/bin::$MASTERPATH:"
+
+# XXX
+# # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+# export PATH="$PATH:$HOME/.rvm/bin"
+
+# If we're in Windows Terminal, advertise true-color support.
+if [ -n "$WT_SESSION" ]; then
+  export COLORTERM='truecolor'
+fi
+
+# Some tools parse this variable to find out whether the terminal's background
+# color is light or dark, see for example `:h 'background'` in Vim. I don't
+# use light-background terminals anywhere, so I think it's safe to set a dark
+# background as the default, if the terminal doesn't specify anything else.
+[ -z "$COLORFGBG" ] && export COLORFGBG='7;0'
+
+# If we are in a terminal, tmux is available and we're not running from _inside_ tmux already, replace this shell with tmux.
+# Except when ~/.notmux exists.
+if [ ! -e "$HOME/.notmux" ] && [ -z "$TMUX" ] && [ -t 0 ] && command -v tmux &>/dev/null; then
+  # In tmux, all clients connected to a session share the same view on it. If you want to have different views in each
+  # client (for example every client being a new terminal emulator window in a GUI setup), you need to use tmux's
+  # "session groups" feature. However, in that setup (where a new session will be created for each terminal
+  # emulator window), closing or detaching these windows will leave behind leftover sessions in the group. Therefore
+  # I'll create the "base session" manually and then attach additional sessions and clients to it for each terminal.
+  # Session names are unique, if the base session already exists this will fail silently. Note that this failure could
+  # also mean that the session could not be created at all for some reason. I don't know why this should happen, so
+  # I'll consider it out of scope for now.
+  tmux new-session -d -t main -s main-base 2>/dev/null || true
+  # Now, actually attach to that session group using an auto-incrementing session name (by not specifying -s).
+  exec tmux new-session -t main
+fi
+
+# Default umask is 0022, i.e. write permissions only for the user, not the group.
+# Some OSes have different defaults; this defines a standard for all of my machines.
+umask 0022
+
+# If this shell is connected to a tty, disable software flow control.
+# In other words, prevent accidentally hitting ^S from freezing the entire terminal.
+[ -t 0 ] && stty -ixon 2>/dev/null
+
+# Talk English to me.
+export CLICOLOR=1
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+# Source other bashes, if they exist
+[[ -s "$HOME/.bash/aliases.sh" ]] && source "$HOME/.bash/aliases.sh"
+[[ -s "$HOME/.bash/os.${uname}.sh" ]] && source "$HOME/.bash/os.${uname}.sh"
+[[ -s "$HOME/.bash/local.sh" ]] && source "$HOME/.bash/local.sh"
+[[ -s "$HOME/.bash/prompt.sh" ]] && source "$HOME/.bash/prompt.sh"
+[[ -s "$HOME/.bash/cht.sh" ]] && source "$HOME/.bash/cht.sh"
+
+# Enable bash completions
+[[ -s "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+
+# Enable RVM
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+# Enable direnv, if available. This needs to be loaded after everything that
+# manipulates the prompt, so I'm putting it at the very end.
+command -v direnv >>/dev/null 2>&1 && eval "$(direnv hook bash)"
