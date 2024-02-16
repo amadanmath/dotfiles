@@ -68,6 +68,9 @@ export CLICOLOR=1
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
+# Set up Python startup
+export PYTHONSTARTUP="$HOME/.config/python/startup.py"
+
 # Source other bashes, if they exist
 [[ -s "$HOME/.bash/aliases.sh" ]] && source "$HOME/.bash/aliases.sh"
 [[ -s "$HOME/.bash/os.${uname}.sh" ]] && source "$HOME/.bash/os.${uname}.sh"
