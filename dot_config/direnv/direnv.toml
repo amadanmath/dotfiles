@@ -1,0 +1,9 @@
+# Thanks to https://codeberg.org/scy/dotfiles/src/branch/main/.config/direnv/direnv.toml
+
+[global]
+# Not sure why a direnv should need stdin.
+disable_stdin = true
+# Don't automatically load .env files, I want to approve things manually.
+load_dotenv = false
+# set -euo pipefail
+strict_env = true
