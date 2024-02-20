@@ -1,0 +1,439 @@
+" vim: set foldmethod=marker foldlevel=0 sw=2 ts=2 sts=2 et:
+
+" Section: Bootstrap {{{
+  " Don't run if Vim is too old
+  if v:version < 600 | finish | endif
+
+  if !get(v:, 'vim_did_enter', !has('vim_starting'))
+    filetype off
+
+    " Add the `.vim` location to runtime path if not originally there
+    if has('win32') || has('nvim')
+      setglobal runtimepath^=~/.vim runtimepath+=~/.vim/after
+    endif
+
+    " Source the `vim` directories next to `bin` directories
+    for s:dir in reverse(split($PATH, has('win32') ? ';' : ':'))
+      if s:dir =~# '^[^,]*[\/]bin$' && isdirectory(s:dir[0:-4] . 'vim')
+        let &runtimepath = s:dir[0:-4] . 'vim,' . &runtimepath . ',' . s:dir[0:-4] . 'vim/after'
+      endif
+    endfor
+
+    " Set (or polyfill) package path
+    if has('packages')
+      let &packpath = &runtimepath
+    else
+      let s:rtp = []
+      for s:dir in split(&runtimepath, ',')
+        if $VIMRUNTIME ==# s:dir
+          call add(s:rtp, s:dir)
+        elseif s:dir =~# 'after$'
+          call extend(s:rtp, [s:dir[0:-6] . 'pack/*/start/*/after', s:dir])
+        else
+          call extend(s:rtp, [s:dir, s:dir . '/pack/*/start/*'])
+        endif
+      endfor
+      let &runtimepath = join(s:rtp, ',')
+    endif
+    unlet! s:rtp s:dir
+  endif
+
+  let mapleader=" "
+  let maplocalleader=" "
+  setglobal nocompatible
+  setglobal pastetoggle=<leader>tp
+
+  filetype plugin indent on
+" }}}
+
+" Section: Autocmd {{{
+  augroup my
+  autocmd!
+
+  " reload and apply vimrc when modified
+  autocmd BufWritePost ~/.vimrc execute "source ~/.vimrc | filetype detect | doautocmd VimEnter | norm <C-o>"
+" }}}
+
+" Section: Folding {{{
+  let g:baan_fold=1
+  let g:clojure_fold = 1
+  let g:fortran_fold=1
+	let g:html_syntax_folding = 1
+	let g:perl_fold = 1
+  let g:perl_fold_blocks = 1
+  let g:php_folding = 1
+	let g:r_syntax_folding = 1
+	let g:rst_fold_enabled = 1
+	let g:ruby_fold = 1
+  let g:sh_fold_enabled= 7
+	let g:tex_fold_enabled=1
+  let g:vimsyn_folding = 'af'
+	let g:xml_syntax_folding = 1
+	let g:zsh_fold_enable = 1
+  let g:markdown_folding = 1
+
+  let g:javaScript_fold = 1
+  let g:rust_fold = 1
+" }}}
+
+" Section: Plugin Manager {{{
+  if has('nvim')
+    let basedir = expand('~/.local/share/nvim')
+    let plugdir = basedir . '/site/autoload/plug.vim'
+  else
+    let basedir = expand('~/.vim')
+    let plugdir = basedir . '/autoload/plug.vim'
+  endif
+  let plugindir = basedir . '/plugged'
+
+  if has('vim_starting')
+    if empty(glob(plugdir))
+      silent execute "!curl -fLo " . plugdir . " --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+      autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    endif
+  endif
+  " }}}
+
+  " Section: Options {{{
+  setglobal expandtab
+  setglobal autoindent
+  setglobal smartindent
+  setglobal nostartofline
+  setglobal linebreak
+  if exists('+breakindent')
+    setglobal breakindent showbreak=\ +
+  endif
+
+  setglobal splitright
+  setglobal splitbelow
+  setglobal modeline
+  setglobal autoread
+  setglobal autowrite " Automatically save before commands like `:next` and `:make`
+  setglobal fileformats=unix,dos,mac
+  setglobal foldopen+=jump
+  setglobal complete-=i     " Searching includes can be slow
+  setglobal display=lastline
+  setglobal incsearch       " Incremental search
+  setglobal smartcase       " Case insensitive searches become sensitive with capitals
+  setglobal cmdheight=2
+  setglobal showcmd
+  setglobal scrolloff=1
+  setglobal sidescrolloff=5
+  setglobal showmatch       " Show matching brackets.
+
+  setglobal wildmenu
+  setglobal wildmode=longest:full,full
+  setglobal wildignore+=tags,*.pyc,*/__pycache__/
+
+  setglobal shiftround
+  setglobal shiftwidth=2
+  setglobal softtabstop=2
+  setglobal backspace=2
+  setglobal smarttab        " sw at the start of the line, sts everywhere else
+
+  setglobal clipboard+=unnamedplus
+  setglobal pastetoggle=<F5>
+  setglobal history=200
+  setglobal laststatus=2    " Always show status line
+  setglobal lazyredraw
+  setglobal visualbell
+  setglobal virtualedit=block
+  setglobal winaltkeys=no
+
+  setglobal timeoutlen=1200 " A little bit more time for macros
+  setglobal ttimeoutlen=50  " Make Esc work faster
+
+  if exists('+printer')
+    setglobal printoptions=paper:A4
+  endif
+
+  if v:version + has("patch541") >= 704
+    setglobal formatoptions+=j
+  endif
+
+  if (&termencoding ==# 'utf-8' || &encoding ==# 'utf-8') && version >= 700
+    let &listchars = "tab:\u21e5\u00b7,trail:\u2423,extends:\u21c9,precedes:\u21c7,nbsp:\u26ad"
+    let &fillchars = "vert:\u259a,fold:\u00b7"
+  else
+    setglobal listchars=tab:>\ ,trail:-,extends:>,precedes:<
+  endif
+
+  if exists('+macmeta')
+    setglobal macmeta
+  endif
+
+  setglobal tags=./tags;
+
+  if has("nvim-0.5.0") || has("patch-8.1.1564")
+    " Recently vim can merge signcolumn and number column into one
+    setglobal signcolumn=number
+  else
+    setglobal signcolumn=yes
+  endif
+
+  language en_US.UTF-8
+  if exists("+spelllang")
+    setglobal spelllang=en_us
+  endif
+
+  if !isdirectory(expand(basedir . '/undo'))
+    call mkdir(expand(basedir . '/undo'), "p", 0700)
+  endif
+  let &undodir = basedir . '/undo'
+  setglobal undofile
+
+  if v:version >= 700
+    " save globals,
+    " marks for 20 files,
+    " registers up to 50 lines,
+    " item up to 10Kb (plus a bit of header)
+    setglobal viminfo=!,'20,<50,s10,h
+  endif
+
+  if !empty($SUDO_USER) && $USER !=# $SUDO_USER
+    setglobal shada=
+    setglobal directory-=$(HOME)/tmp
+    setglobal backupdir-=$(HOME)/tmp
+  endif
+
+  setglobal mouse=nvi
+  setglobal mousemodel=popup
+  if !has("gui_running") && $DISPLAY == '' || !has("gui")
+    setglobal mouse=
+  endif
+
+  if $TERM =~ '^screen'
+    if exists("+ttymouse") && &ttymouse == ''
+      setglobal ttymouse=xterm
+    endif
+    if $TERM != 'screen.linux' && &t_Co == 8
+      setglobal t_Co=16
+    endif
+  endif
+
+  if has("dos16") || has("dos32") || has("win32") || has("win64")
+    if $PATH =~? 'cygwin' && ! exists("g:no_cygwin_shell")
+      setglobal shell=bash
+      setglobal shellpipe=2>&1\|tee
+      setglobal shellslash
+    endif
+  elseif has("mac")
+    setglobal backupskip+=/private/tmp/*
+  endif
+" }}}
+
+" --- PLUGIN --- Settings {{{
+  call plug#begin(plugindir)
+
+  " {{{ vim-stay (make cursor stay where it is)
+    Plug 'zhimsel/vim-stay'
+    set viewoptions=cursor,folds,slash,unix
+  " }}}
+  " {{{ fast-fold (update folds less often)
+    Plug 'Konfekt/FastFold'
+    " fold text object
+    let g:fastfold_savehook = 0
+    xnoremap <silent> iz :<c-u>FastFoldUpdate<cr>]z<up>$v[z<down>^
+    xnoremap <silent> az :<c-u>FastFoldUpdate<cr>]zV[z
+  " }}}
+  " {{{ SimpylFold (fold Python more correctly)
+    Plug 'tmhedberg/SimpylFold'
+  " }}}
+  " {{{ indentpython (indent Python correctly)
+    Plug 'vim-scripts/indentpython.vim'
+  " }}}
+  " {{{ vim-repeat (allow dot to repeat plugin mappings)
+    Plug 'tpope/vim-repeat'
+  " }}}
+  " {{{ vim-fetch (understand file:line:col)
+    Plug 'wsdjeg/vim-fetch'
+  " }}}
+  " {{{ vim-surround (surround stuff)
+    " [cs12] - change 1 to 2
+    " [ys_2] - surround motion/textobject _ with 2
+    " [ds1]  - delete 1
+    " v:[S2] - surround visual with 2
+    Plug 'tpope/vim-surround'
+  " }}}
+  " {{{ vim-endwise (insert end tags on end-using languages like Ruby)
+    Plug 'tpope/vim-endwise'
+  " }}}
+  " {{{ vim-commentary (comment stuff)
+    " comment stuff [gc_]
+    Plug 'tpope/vim-commentary'
+  " }}}
+  " {{{ undotree (navigate the undo tree)
+    Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
+    nnoremap <silent> <F6> :UndotreeToggle<CR>
+  " }}}
+  " {{{ NERDTree (navigate the file tree)
+    Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+    let NERDChristmasTree = 1
+    let NERDTreeQuitOnOpen = 1
+    nnoremap <silent> <F2> :NERDTreeToggle<CR>
+    nnoremap <silent> <S-F2> :execute "NERDTree ".expand("%:p:h")<CR>
+  " }}}
+  " {{{ vim-unimpaired (common up-down shortcuts)
+    Plug 'tpope/vim-unimpaired'
+  " }}}
+  " {{{ vim-abolish (case coercion, :S, :Abolish)
+    " coercion with [cr_], :S/child{,ren}/adult{,s}/g
+    " camel, mixed, snake, uppersnake, kebab, .dot, [ ]space, title
+    Plug 'tpope/vim-abolish'
+    " augroup abolishish
+    "   au VimEnter * Abolish anomol{y,ies} anomal{}
+    " augroup END
+  " }}}
+  " {{{ leap or vim-easymotion (s/S/gs makes you move! S->X in visual)
+    if has("nvim")
+      Plug 'ggandor/leap.nvim'
+      nnoremap s <Plug>(leap-forward)
+      onoremap s <Plug>(leap-forward)
+      xnoremap s <Plug>(leap-forward)
+      nnoremap S <Plug>(leap-backward)
+      onoremap X <Plug>(leap-backward)
+      xnoremap X <Plug>(leap-backward)
+      nnoremap gs <Plug>(leap-from-window)
+      onoremap gs <Plug>(leap-from-window)
+      xnoremap gs <Plug>(leap-from-window)
+      nnoremap <Leader>f <Plug>(leap-forward-to)
+      onoremap <Leader>f <Plug>(leap-forward-to)
+      xnoremap <Leader>f <Plug>(leap-forward-to)
+      nnoremap <Leader>F <Plug>(leap-backward-to)
+      onoremap <Leader>F <Plug>(leap-backward-to)
+      xnoremap <Leader>F <Plug>(leap-backward-to)
+      nnoremap <Leader>t <Plug>(leap-forward-till)
+      onoremap <Leader>t <Plug>(leap-forward-till)
+      xnoremap <Leader>t <Plug>(leap-forward-till)
+      nnoremap <Leader>T <Plug>(leap-backward-till)
+      onoremap <Leader>T <Plug>(leap-backward-till)
+      xnoremap <Leader>T <Plug>(leap-backward-till)
+    else
+      Plug 'easymotion/vim-easymotion'
+      nmap s <Plug>(easymotion-overwin-f2)
+      " nmap <Space> <Plug>(easymotion-prefix)
+      " omap <Space> <Plug>(easymotion-prefix)
+      " xmap <Space> <Plug>(easymotion-prefix)
+    endif
+  " }}}
+  " {{{ sparkup (zen-coding for HTML -  <Ctrl-E>)
+    Plug 'rstacruz/sparkup'
+  " }}}
+  " {{{ renamer (rename files :Renamer -> :w)
+    Plug 'qpkorr/vim-renamer'
+    let g:RenamerSupportColonWToRename = 1
+  " }}}
+  " {{{ vim-fugitive (Git interaction)
+    Plug 'tpope/vim-fugitive'
+  " }}}
+  " {{{ vim-ruby (Ruby support)
+    Plug 'vim-ruby/vim-ruby'
+  " }}}
+  " {{{ ag (search through subdirectories)
+    Plug 'mileszs/ack.vim'
+    if executable('rg')
+      let g:ackprg = 'rg --vimgrep --no-heading'
+    elseif executable('ag')
+      let g:ackprg = 'ag --vimgrep --smart-case'                                                   
+    endif
+  " }}}
+  " {{{ vim-wiki (wiki: <Leader>ww, wt, wy, wi...)
+    Plug 'vimwiki/vimwiki'
+    let g:vimwiki_list = [
+      \ {'path': '~/.vim/vimwiki/', 'path_html': '~/Sites/vimwiki'}]
+  " }}}
+  " {{{ vim-easy-align (align tables: ga)
+    Plug 'junegunn/vim-easy-align'
+    xmap ga <Plug>(EasyAlign)
+    nmap ga <Plug>(EasyAlign)
+  " }}}
+  " {{{ ALE (asynchronous lint engine)
+    Plug 'w0rp/ale'
+    let g:ale_fixers = {
+    \ 'javascript': ['eslint']
+    \ }
+    let g:ale_fix_on_save = 1
+    let g:ale_sign_error = '❌'
+    let g:ale_sign_warning = '⚠️'
+  " }}}
+  " {{{ vim-javascript (dependency for vim-js)
+    Plug 'pangloss/vim-javascript'  " dependency plugin
+  " }}}
+  " {{{ vim-jsx-pretty (dependency for vim-js)
+    Plug 'maxmellon/vim-jsx-pretty'
+  " }}}
+  " {{{ vim-js (modern JavaScript syntax)
+    Plug 'yuezk/vim-js'
+  " }}}
+  " {{{ vim-go (Go-lang syntax)
+    Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+  " }}}
+  " {{{ coc (intergration with language servers)
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    " https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions#implemented-coc-extensions
+    let g:coc_global_extensions = [
+      \ 'coc-vimlsp',
+      \ 'coc-pyright',
+      \ 'coc-solargraph',
+      \ 'coc-tsserver',
+      \ 'coc-html',
+      \ 'coc-css',
+      \ 'coc-json',
+      \ 'coc-yaml',
+      \]
+  " }}}
+  " {{{ colorscheme: vim-vitamin-onec
+    Plug 'gkapfham/vim-vitamin-onec'
+  " }}}
+
+  call plug#end()
+" }}}
+
+" Section: Mappings {{{
+  " select the pasted section
+  nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
+  " visual mode paste without yanking
+  vnoremap P "_dp
+  " yank till eol, to make it similar to D and C
+  nnoremap Y  y$
+  " remove the search highlight
+  if exists(":nohls")
+    nnoremap <silent> <C-L> :nohls<CR><C-L>
+  endif
+
+  " {{{ rename in file
+  function! RenameInFile()
+    normal "zyiw
+    let line_number = line('.')
+    let original = @z
+    let replacement = input("Replace [" . original . "] with: ", original)
+    execute "%s/\\<" . original . "\\>/" . replacement . "/ceg"
+    execute line_number
+    let @/ = replacement
+    setglobal hls
+  endfunction
+  nnoremap <Leader>rn :call RenameInFile()<CR>
+  " }}}
+" }}}
+
+" Section: GUI {{{
+  colorscheme vitaminonec
+
+  function! s:DefaultFont() abort
+    if has('mac')
+      return 'Monaco:h14'
+    elseif has('win32')
+      return 'Consolas:h14,Courier New:h14'
+    else
+      let match = matchlist(system('xrdb -get URxvt.font'), '^xft:\([^:,]*\)-\([0-9.]\+\)')
+      if len(match)
+        return join(match[1:2], ' ')
+      else
+        return 'Monospace 13'
+      endif
+    endif
+  endfunction
+  if has("gui_running")
+    let &guifont = s:DefaultFont()
+  endif
+" }}}
