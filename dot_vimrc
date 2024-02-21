@@ -12,12 +12,12 @@
       setglobal runtimepath^=~/.vim runtimepath+=~/.vim/after
     endif
 
-    " Source the `vim` directories next to `bin` directories
-    for s:dir in reverse(split($PATH, has('win32') ? ';' : ':'))
-      if s:dir =~# '^[^,]*[\/]bin$' && isdirectory(s:dir[0:-4] . 'vim')
-        let &runtimepath = s:dir[0:-4] . 'vim,' . &runtimepath . ',' . s:dir[0:-4] . 'vim/after'
-      endif
-    endfor
+    " " Source the `vim` directories next to `bin` directories
+    " for s:dir in reverse(split($PATH, has('win32') ? ';' : ':'))
+    "   if s:dir =~# '^[^,]*[\/]bin$' && isdirectory(s:dir[0:-4] . 'vim')
+    "     let &runtimepath = s:dir[0:-4] . 'vim,' . &runtimepath . ',' . s:dir[0:-4] . 'vim/after'
+    "   endif
+    " endfor
 
     " Set (or polyfill) package path
     if has('packages')
@@ -77,13 +77,8 @@
 " }}}
 
 " Section: Plugin Manager {{{
-  if has('nvim')
-    let basedir = expand('~/.local/share/nvim')
-    let plugdir = basedir . '/site/autoload/plug.vim'
-  else
-    let basedir = expand('~/.vim')
-    let plugdir = basedir . '/autoload/plug.vim'
-  endif
+  let basedir = expand('~/.vim')
+  let plugdir = basedir . '/autoload/plug.vim'
   let plugindir = basedir . '/plugged'
 
   if has('vim_starting')
@@ -115,7 +110,6 @@
   setglobal display=lastline
   setglobal incsearch       " Incremental search
   setglobal smartcase       " Case insensitive searches become sensitive with capitals
-  setglobal signcolumn
   setglobal cmdheight=2
   setglobal showcmd
   setglobal scrolloff=1
@@ -168,9 +162,9 @@
 
   if has("nvim-0.5.0") || has("patch-8.1.1564")
     " Recently vim can merge signcolumn and number column into one
-    setglobal signcolumn=number
+    set signcolumn=number
   else
-    setglobal signcolumn=yes
+    set signcolumn=yes
   endif
 
   language en_US.UTF-8
