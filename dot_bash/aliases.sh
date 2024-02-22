@@ -1,10 +1,11 @@
 if command -v nvim >>/dev/null 2>&1
 then
-  alias vim=nvim
-  alias vimrc="vim ~/.config/nvim/init.vim"
-else
-  alias vvimrc="vim ~/.vimrc"
+  alias vim="nvim"
+  alias vi="nvim"
+  alias vimdiff="nvim -d"
+  alias view="nvim -R"
 fi
+alias vvimrc="vim ~/.vimrc"
 alias valiases="vim ~/.bash/aliases.sh && source ~/.bash/aliases.sh"
 alias rgrep="grep -r"
 
@@ -23,12 +24,18 @@ v() {
   if [[ -n "$1" ]]
   then
     venv="$1"
+  elif [[ "$1" == "-" ]]
+  then
+    venv="~/venv/default"
   else
     venv="$(ls -d v-* 2>>/dev/null | head -1)"
   fi
+
   if [[ -n "$venv" && -f "$venv/bin/activate" ]]
   then
     source "$venv/bin/activate"
+  else
+    echo "v: venv not found" >&2
   fi
 }
 
