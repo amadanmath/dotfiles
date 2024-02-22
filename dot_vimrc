@@ -4,12 +4,23 @@
   " Don't run if Vim is too old
   if v:version < 600 | finish | endif
 
+  let basedir = expand('~/.vim')
+  let plugdir = basedir . '/autoload/plug.vim'
+  let plugindir = basedir . '/plugged'
+
   if !get(v:, 'vim_did_enter', !has('vim_starting'))
     filetype off
 
     " Add the `.vim` location to runtime path if not originally there
     if has('win32') || has('nvim')
       setglobal runtimepath^=~/.vim runtimepath+=~/.vim/after
+    endif
+
+    " Install vim-plug
+    if empty(glob(plugdir))
+      silent execute "!curl -fLo " . plugdir . " --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+      let plug_installing=1
+      autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
     endif
 
     " " Source the `vim` directories next to `bin` directories
@@ -76,20 +87,7 @@
   let g:rust_fold = 1
 " }}}
 
-" Section: Plugin Manager {{{
-  let basedir = expand('~/.vim')
-  let plugdir = basedir . '/autoload/plug.vim'
-  let plugindir = basedir . '/plugged'
-
-  if has('vim_starting')
-    if empty(glob(plugdir))
-      silent execute "!curl -fLo " . plugdir . " --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-      autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-    endif
-  endif
-  " }}}
-
-  " Section: Options {{{
+" Section: Options {{{
   setglobal expandtab
   setglobal autoindent
   setglobal smartindent
@@ -362,7 +360,7 @@
     Plug 'yuezk/vim-js'
   " }}}
   " {{{ vim-go (Go-lang syntax)
-    Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+    " XXX Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
   " }}}
   " {{{ coc (intergration with language servers)
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -486,7 +484,9 @@
     " Add (Neo)Vim's native statusline support
     " NOTE: Please see `:h coc-status` for integrations with external plugins that
     " provide custom statusline: lightline.vim, vim-airline
-    set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+    if !exists("plug_installing")
+      set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+    endif
   " }}}
   " {{{ colorscheme: vim-vitamin-onec
     Plug 'gkapfham/vim-vitamin-onec'
@@ -523,7 +523,9 @@
 " }}}
 
 " Section: GUI {{{
-  colorscheme vitaminonec
+  if !exists("plug_installing")
+    colorscheme vitaminonec
+  endif
 
   function! s:DefaultFont() abort
     if has('mac')
