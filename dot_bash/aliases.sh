@@ -21,12 +21,12 @@ export LS_COLORS='rs=0:di=38;5;27:ln=38;5;51:mh=44;38;5;15:pi=40;38;5;11:so=38;5
 
 # Shortcut for venv activation
 v() {
-  if [[ -n "$1" ]]
+  if [[ "$1" == "-" ]]
+  then
+    venv="$HOME/.venv/default"
+  elif [[ -n "$1" ]]
   then
     venv="$1"
-  elif [[ "$1" == "-" ]]
-  then
-    venv="~/venv/default"
   else
     venv="$(ls -d v-* 2>>/dev/null | head -1)"
   fi
