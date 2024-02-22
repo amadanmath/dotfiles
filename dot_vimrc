@@ -22,6 +22,15 @@
   let plugdir = basedir . '/autoload/plug.vim'
   let plugindir = basedir . '/plugged'
 
+  let default_python = $HOME . '/.venv/default/bin/python'
+  if filereadable(default_python)
+    call system(default_python . ' -c "import neovim"')
+    if !v:shell_error
+      let g:python3_host_prog = '$HOME/.venv/default/bin/python'
+    endif
+  endif
+  unlet default_python
+
   if !get(v:, 'vim_did_enter', !has('vim_starting'))
     filetype off
 
