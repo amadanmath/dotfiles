@@ -5,4 +5,5 @@ return {
   { "echasnovski/mini.pairs", enabled = false }, -- autoclose parens; _definitely_ not for me
   { "folke/noice.nvim", enabled = false }, -- snazzy ui, but _definitely_ not for me
   { "nvim-neo-tree/neo-tree.nvim", enabled = false }, -- replace with oil.nvim
+  { "goolord/alpha-nvim", enabled = false }, -- another startup page; not for me
 }
