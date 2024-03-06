@@ -5,6 +5,8 @@ return {
     keys = {
       { "<leader>e", "<Cmd>Oil<CR>", desc = "Oil" },
     },
+    cmd = "Oil",
+    lazy = false,
     opts = {
       columns = {
         "icon",

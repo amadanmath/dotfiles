@@ -2,7 +2,7 @@
 
 " Section: Bootstrap {{{
   " Install NeoVim if not already there
-  if !has('nvim')
+  if !has('nvim-0.8.0')
     echo "Installing NeoVim"
     if has('macunix')
       call system('brew install neovim')

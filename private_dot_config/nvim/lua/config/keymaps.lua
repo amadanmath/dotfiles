@@ -2,6 +2,14 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
+-- Avoiding Meta bindings to prevent messing up Esc
+vim.keymap.del("n", "<A-j>")
+vim.keymap.del("n", "<A-k>")
+vim.keymap.del("i", "<A-j>")
+vim.keymap.del("i", "<A-k>")
+vim.keymap.del("v", "<A-j>")
+vim.keymap.del("v", "<A-k>")
+
 -- LazyVim binds to next/prev buffer, but I need my H/L
 vim.keymap.del("n", "<S-h>") -- originally cursor high, LazyVim binds to prev buffer
 vim.keymap.del("n", "<S-l>") -- originally cursor low, LazyVim binds to next buffer
