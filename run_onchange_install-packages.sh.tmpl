@@ -1,0 +1,40 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+
+# I will install everything locally
+# if groups | grep -q '\bsudo\b'; then
+
+mkdir -p "$HOME/.local/bin/"
+mkdir -p "$HOME/.local/share/bash-completion/completions/"
+
+if [[ ! -x "$HOME/.local/bin/rg" ]]; then
+	ripgrep_version=14.1.0
+	arch=$(uname -m)
+	curdir=$(pwd)
+	tempdir=$(mktemp -d)
+	cd "$tempdir"
+	curl -LO "https://github.com/BurntSushi/ripgrep/releases/download/$ripgrep_version/ripgrep-$ripgrep_version-$arch-unknown-linux-musl.tar.gz"
+	tar xf "ripgrep-$ripgrep_version-$arch-unknown-linux-musl.tar.gz"
+	cd "ripgrep-$ripgrep_version-$arch-unknown-linux-musl"
+	mv rg "$HOME/.local/bin/"
+	mv complete/rg.bash "$HOME/.local/share/bash-completion/completions/"
+	chmod 755 "$HOME/.local/share/bash-completion/completions/rg.bash"
+	cd "$curdir"
+	rm -rf "$tempdir"
+fi
+
+if [[ ! -x "$HOME/.local/bin/nvim" ]]; then
+	curl -L https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -o "$HOME/.local/bin/nvim"
+	chmod 755 "$HOME/.local/bin/nvim"
+fi
+
+{{- /* ------------------------------------------------------------ */ -}}
+
+{{ else if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+
+brew install ripgrep neovim node python3
+
+{{- /* ------------------------------------------------------------ */ -}}
+
+{{ end -}}
