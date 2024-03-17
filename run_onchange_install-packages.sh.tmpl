@@ -23,18 +23,32 @@ if [[ ! -x "$HOME/.local/bin/rg" ]]; then
 	rm -rf "$tempdir"
 fi
 
+# TODO: install node
+# TODO: install python3
+
+{{/* ------------------------------------------------------------ */ -}}
+
+{{ else if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+
+brew install ripgrep node python3
+
+{{/* ------------------------------------------------------------ */ -}}
+
+{{ end -}}
+
 if [[ ! -x "$HOME/.local/bin/nvim" ]]; then
 	curl -L https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -o "$HOME/.local/bin/nvim"
 	chmod 755 "$HOME/.local/bin/nvim"
 fi
 
-{{- /* ------------------------------------------------------------ */ -}}
+if [[ ! -x "$HOME/.rvm/bin/rvm" ]]; then
+	gpg --keyserver keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+	\curl -sSL https://get.rvm.io | bash
+	source /home/amadan/.rvm/scripts/rvm
+	rvm install ruby
+fi
 
-{{ else if eq .chezmoi.os "darwin" -}}
-#!/bin/sh
-
-brew install ripgrep neovim node python3
-
-{{- /* ------------------------------------------------------------ */ -}}
-
-{{ end -}}
+if [[ ! -d "$HOME/.venv/default" ]] && command -v python3 >/dev/null 2>&1; then
+	python3 -m venv "$HOME"/venv/default
+fi
