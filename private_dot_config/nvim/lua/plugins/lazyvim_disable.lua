@@ -6,4 +6,5 @@ return {
   { "folke/noice.nvim", enabled = false }, -- snazzy ui, but _definitely_ not for me
   { "nvim-neo-tree/neo-tree.nvim", enabled = false }, -- replace with oil.nvim
   { "goolord/alpha-nvim", enabled = false }, -- another startup page; not for me
+  { "indent-blankline.nvim", enabled = false }, -- mini.indentscope does its job
 }
