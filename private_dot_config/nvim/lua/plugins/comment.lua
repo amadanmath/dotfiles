@@ -20,12 +20,11 @@ return {
         line = "gc", -- Line-comment keymap
         block = "gb", -- Block-comment keymap
       },
-      config = function()
-        -- TODO: check if this is correct
-        require("Comment").setup({
-          pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
-        })
-      end,
     },
+    config = function()
+      require("Comment").setup({
+        pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
+      })
+    end,
   },
 }
