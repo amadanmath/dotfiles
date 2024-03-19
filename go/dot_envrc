@@ -1,0 +1,8 @@
+# see if there is a `go` already in PATH
+GOROOT=$(go env GOROOT 2>/dev/null || true)
+if [[ -z "$GOROOT" ]]; then
+  export GOROOT="$HOME/go/go"
+fi
+PATH_add "$GOROOT/bin"
+export GOPATH="$HOME/go"
+PATH_add "$GOPATH/bin"

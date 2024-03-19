@@ -1,35 +1,49 @@
-{{ if eq .chezmoi.os "linux" -}}
 #!/bin/bash
+
+go_version=1.22.1
+ripgrep_version=14.1.0
+
+{{ if eq .chezmoi.os "linux" -}}
 
 # I will install everything locally
 # if groups | grep -q '\bsudo\b'; then
 
+mkdir -p "$HOME/tmp/"
 mkdir -p "$HOME/.local/bin/"
 mkdir -p "$HOME/.local/share/bash-completion/completions/"
 
 if [[ ! -x "$HOME/.local/bin/rg" ]]; then
-	ripgrep_version=14.1.0
-	arch=$(uname -m)
 	curdir=$(pwd)
-	tempdir=$(mktemp -d)
-	cd "$tempdir"
+	arch=$(uname -m)
+	cd "$HOME/tmp/"
 	curl -LO "https://github.com/BurntSushi/ripgrep/releases/download/$ripgrep_version/ripgrep-$ripgrep_version-$arch-unknown-linux-musl.tar.gz"
 	tar xf "ripgrep-$ripgrep_version-$arch-unknown-linux-musl.tar.gz"
 	cd "ripgrep-$ripgrep_version-$arch-unknown-linux-musl"
 	mv rg "$HOME/.local/bin/"
 	mv complete/rg.bash "$HOME/.local/share/bash-completion/completions/"
 	chmod 755 "$HOME/.local/share/bash-completion/completions/rg.bash"
+	cd ..
+	rm -rf "ripgrep-$ripgrep_version-$arch-unknown-linux-musl"
 	cd "$curdir"
-	rm -rf "$tempdir"
 fi
 
 # TODO: install node
 # TODO: install python3
 
+if [[ ! -x "$HOME/go/go$go_version/bin/go" ]]; then
+	cd "$HOME/tmp/"
+	curl -LO "https://go.dev/dl/go$go_version.linux-amd64.tar.gz"
+	rm -rf go
+	echo tar xzf "go$go_version.linux-amd64.tar.gz"
+	tar xzf "go$go_version.linux-amd64.tar.gz"
+	rm -rf "$HOME/go/go$go_version"
+	mv go "$HOME/go/go$go_version"
+	ln -sf "$HOME/go/go$go_version" "$HOME/go/go"
+fi
+
 {{/* ------------------------------------------------------------ */ -}}
 
 {{ else if eq .chezmoi.os "darwin" -}}
-#!/bin/sh
 
 brew install ripgrep node python3
 
@@ -45,7 +59,7 @@ fi
 if [[ ! -x "$HOME/.rvm/bin/rvm" ]]; then
 	gpg --keyserver keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
 	\curl -sSL https://get.rvm.io | bash
-	source /home/amadan/.rvm/scripts/rvm
+	source "${HOME}/.rvm/scripts/rvm"
 	rvm install ruby
 fi
 
