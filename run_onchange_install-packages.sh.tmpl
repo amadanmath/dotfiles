@@ -39,8 +39,9 @@ if [[ ! -x "$HOME/go/go$go_version/bin/go" ]]; then
 	cd "$HOME/tmp/"
 	curl -LO "https://go.dev/dl/go$go_version.linux-amd64.tar.gz"
 	rm -rf go
-	echo tar xzf "go$go_version.linux-amd64.tar.gz"
+	mkdir -p "$HOME/go/src"
 	tar xzf "go$go_version.linux-amd64.tar.gz"
+	rm "go$go_version.linux-amd64.tar.gz"
 	rm -rf "$HOME/go/go$go_version"
 	mv go "$HOME/go/go$go_version"
 	ln -sf "$HOME/go/go$go_version" "$HOME/go/go"

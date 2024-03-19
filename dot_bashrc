@@ -85,6 +85,14 @@ export EDITOR="${BASH_ALIASES[vim]:-vim}"
 # Enable RVM
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
+# See if there is a `go` already in PATH; set up GOROOT and GOPATH
+GOROOT=$(go env GOROOT 2>/dev/null || true)
+if [[ -z "$GOROOT" ]]; then
+	export GOROOT="$HOME/go/go"
+fi
+export GOPATH="$HOME/go"
+PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
+
 # Enable direnv, if available. This needs to be loaded after everything that
 # manipulates the prompt, so I'm putting it at the very end.
 command -v direnv >>/dev/null 2>&1 && eval "$(direnv hook bash)"
