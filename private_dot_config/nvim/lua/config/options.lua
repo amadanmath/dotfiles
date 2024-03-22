@@ -4,6 +4,7 @@
 
 vim.opt.linebreak = true
 vim.opt.breakindent = true
+vim.opt.smartindent = false
 vim.opt.showbreak = "+ "
 vim.opt.foldopen:append({ "jump" })
 vim.opt.scrolloff = 1
