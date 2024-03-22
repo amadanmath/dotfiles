@@ -62,3 +62,17 @@ vim.keymap.del("n", "<leader><tab><tab>")
 vim.keymap.del("n", "<leader><tab>]")
 vim.keymap.del("n", "<leader><tab>d")
 vim.keymap.del("n", "<leader><tab>[")
+
+----------
+
+-- Edit snippets for current filetype
+vim.keymap.set("n", "<leader>ne", function()
+  require("luasnip.loaders").edit_snippet_files({
+    ft_filter = function(ft)
+      return ft == vim.bo.filetype
+    end,
+  })
+end, { desc = "Edit ft snippets" })
+
+-- Fix backspace: https://github.com/L3MON4D3/LuaSnip/issues/622#issuecomment-1275350599
+vim.keymap.set("s", "<bs>", "<C-o>s", { desc = "Backspace (fixed)" })
