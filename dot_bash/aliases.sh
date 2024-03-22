@@ -33,6 +33,14 @@ v() {
 	fi
 }
 
+# ssh-agent activation
+ssha() {
+	if [[ -z "$SSH_AUTH_SOCK" ]]; then
+		eval $(ssh-agent)
+		ssh-add "$@"
+	fi
+}
+
 # sshcd host:dir = ssh host, then cd dir
 sshcd() {
 	dest="$1"
