@@ -8,9 +8,9 @@ vim.api.nvim_create_autocmd("ColorScheme", {
   group = my_group,
   callback = function()
     vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#666666" })
-    vim.api.nvim_set_hl(0, "LuasnipInsertNodeUnvisited", { bg = "#330000" })
-    vim.api.nvim_set_hl(0, "LuasnipInsertNodeActive", { bg = "#000044" })
-    vim.api.nvim_set_hl(0, "LuasnipChoiceNodeUnvisited", { bg = "#330000" })
-    vim.api.nvim_set_hl(0, "LuasnipChoiceNodeActive", { bg = "#000044" })
+    vim.api.nvim_set_hl(0, "LuasnipInsertNodeUnvisited", { bg = "#440000" })
+    vim.api.nvim_set_hl(0, "LuasnipInsertNodeVisited", { bg = "#000066" })
+    vim.api.nvim_set_hl(0, "LuasnipChoiceNodeUnvisited", { bg = "#440000" })
+    vim.api.nvim_set_hl(0, "LuasnipChoiceNodeVisited", { bg = "#000066" })
   end,
 })
