@@ -1,2 +1,68 @@
+# Obviously
+/.config/chezmoi
+
+# Repository README
 /README.md
-.mypy_cache
+
+
+# Stuff for work, stuff not for work, transient stuff
+/work
+/xwork
+/tmp
+
+# Individual app/lang folders
+/go
+/obsidian
+
+# local stuff
+/.local
+
+
+# I don't use zsh/mksh, why is it even here...
+/.zshrc
+/.zlogin
+/.mkshrc
+
+# Just in case Vim is used - this should be deleted
+/.viminfo
+/.swp
+
+
+# Shared public key stuff by Mozilla and others
+/.pki
+
+# wget stuff
+/.wget-hsts
+
+# PulseAudio
+/.config/pulse
+
+# Various caches
+/.cache
+/.mypy_cache
+
+# Various history files
+/.bash_history
+/.python_history
+/.lesshst
+/.irb-history
+
+# Various stores
+/.rvm
+/.npm
+/.venv
+/.docker
+/.bun
+
+# Various settings
+/.config/configstore
+/.config/dconf
+/.config/obsidian
+
+# NVIDIA stuff
+/.nv
+
+# Various housecleaning
+/.motd_shown
+/.sudo_as_admin_successful
+
