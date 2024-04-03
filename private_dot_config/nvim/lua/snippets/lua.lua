@@ -17,4 +17,13 @@ return {
     t({ "", "end" }),
     i(0),
   }),
+
+  -- https://luals.github.io/wiki/diagnostics/
+  s({
+    trig = "ddmf",
+    name = "Disable diagnostics: missing fields",
+    desc = "Disables diagnostic messages about missing fields on the next line",
+  }, {
+    t("---@diagnostic disable-next-line: missing-fields"),
+  }),
 }

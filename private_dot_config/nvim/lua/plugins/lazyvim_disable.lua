@@ -8,4 +8,5 @@ return {
   { "goolord/alpha-nvim", enabled = false }, -- another startup page; not for me
   { "indent-blankline.nvim", enabled = false }, -- mini.indentscope does its job
   { "rafamadriz/friendly-snippets", enabled = false }, -- I want my own snippets
+  { "echasnovski/mini.indentscope", enabled = false }, -- Let's try hlchunk instead
 }

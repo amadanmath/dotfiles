@@ -87,10 +87,13 @@ return {
   {
     "neovim/nvim-lspconfig",
     ---@class PluginLspOpts
+    ---@diagnostic disable-next-line: missing-fields
     opts = {
       ---@type lspconfig.options
+      ---@diagnostic disable-next-line: missing-fields
       servers = {
         -- pyright will be automatically installed with mason and loaded with lspconfig
+        ---@diagnostic disable-next-line: missing-fields
         pyright = {},
       },
     },
@@ -112,8 +115,10 @@ return {
     ---@class PluginLspOpts
     opts = {
       ---@type lspconfig.options
+      ---@diagnostic disable-next-line: missing-fields
       servers = {
         -- tsserver will be automatically installed with mason and loaded with lspconfig
+        ---@diagnostic disable-next-line: missing-fields
         tsserver = {},
       },
       -- you can do any additional lsp server setup here

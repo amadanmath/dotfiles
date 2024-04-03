@@ -29,7 +29,7 @@ return {
         disable = function()
           -- check if 'filetype' option includes 'chezmoitmpl'
           -- chezmoi.vim handles it without treesitter
-          if string.find(vim.bo.filetype, 'chezmoitmpl') then
+          if string.find(vim.bo.filetype, "chezmoitmpl") then
             return true
           end
         end,
@@ -54,7 +54,7 @@ return {
       },
     },
     config = function(_, opts)
-      require('nvim-treesitter.configs').setup(opts)
+      require("nvim-treesitter.configs").setup(opts)
     end,
   },
 }
