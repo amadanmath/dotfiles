@@ -16,6 +16,10 @@
 
 # local stuff
 /.local
+/.gitconfig_local
+
+# Secrets
+/.kaggle
 
 
 # I don't use zsh/mksh, why is it even here...
@@ -24,12 +28,16 @@
 /.mkshrc
 
 # Just in case Vim is used - this should be deleted
+/.vim
 /.viminfo
 /.swp
 
 
 # Shared public key stuff by Mozilla and others
 /.pki
+
+# X credentials
+/.Xauthority
 
 # wget stuff
 /.wget-hsts
@@ -46,6 +54,7 @@
 /.python_history
 /.lesshst
 /.irb-history
+/.sqlite_history
 
 # Various stores
 /.rvm
