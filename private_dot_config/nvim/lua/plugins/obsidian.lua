@@ -16,6 +16,21 @@ Use "Obsidian (Ubuntu)" from Start Menu, or `/opt/Obsidian/obsidian`
 
 ]]
 
+local obsidian_workspaces = {
+  {
+    name = "personal",
+    path = "~/obsidian/home",
+  },
+  {
+    name = "aist",
+    path = "~/obsidian/aist",
+  },
+}
+
+for _, workspace in ipairs(obsidian_workspaces) do
+  vim.fn.mkdir(vim.fn.expand(workspace.path), "p")
+end
+
 return {
   {
     "epwalsh/obsidian.nvim",
@@ -37,30 +52,24 @@ return {
     },
     opts = {
       workspaces = {
-        {
-          name = "personal",
-          path = "~/obsidian/home",
-        },
-        {
-          name = "aist",
-          path = "~/obsidian/aist",
-        },
-        {
-          name = "no-vault",
-          path = function()
-            -- alternatively use the CWD:
-            -- return assert(vim.fn.getcwd())
-            return assert(vim.fs.dirname(vim.api.nvim_buf_get_name(0)))
-          end,
-          overrides = {
-            notes_subdir = vim.NIL, -- have to use 'vim.NIL' instead of 'nil'
-            new_notes_location = "current_dir",
-            templates = {
-              subdir = vim.NIL,
+        vim.fn.extend(obsidian_workspaces, {
+          {
+            name = "no-vault",
+            path = function()
+              -- alternatively use the CWD:
+              -- return assert(vim.fn.getcwd())
+              return assert(vim.fs.dirname(vim.api.nvim_buf_get_name(0)))
+            end,
+            overrides = {
+              notes_subdir = vim.NIL, -- have to use 'vim.NIL' instead of 'nil'
+              new_notes_location = "current_dir",
+              templates = {
+                subdir = vim.NIL,
+              },
+              disable_frontmatter = true,
             },
-            disable_frontmatter = true,
           },
-        },
+        }),
       },
       mappings = {
         ["gf"] = {
