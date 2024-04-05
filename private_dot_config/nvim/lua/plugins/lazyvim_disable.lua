@@ -9,4 +9,5 @@ return {
   { "indent-blankline.nvim", enabled = false }, -- mini.indentscope does its job
   { "rafamadriz/friendly-snippets", enabled = false }, -- I want my own snippets
   { "echasnovski/mini.indentscope", enabled = false }, -- Let's try hlchunk instead
+  { "stevearc/conform.nvim", enabled = false }, -- Stop messing up my files
 }
