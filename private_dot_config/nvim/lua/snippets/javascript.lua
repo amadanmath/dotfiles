@@ -6,7 +6,7 @@ local extras = require("luasnip.extras")
 local n = extras.nonempty
 
 return {
-  s({ trig = "fn", name = "Function", desc = "Insert a function" }, {
+  s({ trig = "fn", name = "Function" }, {
     t("function"),
     n(1, " ", ""),
     i(1, "name"),
@@ -15,6 +15,17 @@ return {
     t({ ") {", "\t" }),
     i(3, "body"),
     t({ "", "}" }),
-    i(0),
+  }),
+
+  s({ trig = "qs", name = "querySelector" }, {
+    t("querySelector("),
+    i(1, "selector"),
+    t(")"),
+  }),
+
+  s({ trig = "qsa", name = "querySelectorAll" }, {
+    t("querySelectorAll("),
+    i(1, "selector"),
+    t(")"),
   }),
 }
