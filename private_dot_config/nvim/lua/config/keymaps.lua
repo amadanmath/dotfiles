@@ -52,8 +52,8 @@ vim.keymap.del("n", "<leader>ww") -- previous
 vim.keymap.del("n", "<leader>wd") -- close
 vim.keymap.del("n", "<leader>w-") -- split
 vim.keymap.del("n", "<leader>w|") -- vertical
-vim.keymap.del("n", "<leader>-") -- split
-vim.keymap.del("n", "<leader>|") -- vertical
+vim.keymap.del("n", "<leader>-")  -- split
+vim.keymap.del("n", "<leader>|")  -- vertical
 
 -- I don't use tabs, and I don't like <leader><tab> being taken for it
 vim.keymap.del("n", "<leader><tab>l")
