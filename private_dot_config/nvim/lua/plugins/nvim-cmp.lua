@@ -5,6 +5,8 @@ return {
     -- Tried https://www.lazyvim.org/configuration/recipes#supertab
     -- but those settings don't seem to fit me well
     opts = function(_, opts)
+      table.insert(opts.sources, { name = "codeium" })
+
       local has_words_before = function()
         unpack = unpack or table.unpack
         local line, col = unpack(vim.api.nvim_win_get_cursor(0))
