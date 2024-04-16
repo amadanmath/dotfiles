@@ -82,7 +82,7 @@ return {
       },
       follow_url_func = function(url)
         if vim.fn.has('macunix') then
-          vim.fn.jobstart({ "open", url })   -- Mac OS
+          vim.fn.jobstart({ "open", url })     -- Mac OS
         elseif vim.fn.has('linux') then
           vim.fn.jobstart({ "xdg-open", url }) -- linux
         end

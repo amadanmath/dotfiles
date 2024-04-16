@@ -46,6 +46,13 @@ if [[ ! -x "$HOME/go/go$go_version/bin/go" ]]; then
 	ln -sf "$HOME/go/go$go_version" "$HOME/go/go"
 fi
 
+{{ if (.chezmoi.kernel.osrelease | lower | contains "microsoft") -}}
+  if ! command -v wslview > /dev/null
+  then
+    apt install wslu
+  fi
+{{ end -}}
+
 {{/* ------------------------------------------------------------ */ -}}
 
 {{ else if eq .chezmoi.os "darwin" -}}
