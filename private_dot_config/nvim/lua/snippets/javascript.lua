@@ -28,4 +28,16 @@ return {
     i(1, "selector"),
     t(")"),
   }),
+
+  s({ trig = "doc", name = "document" }, {
+    t("document"),
+  }),
+
+  s({ trig = "ael", name = "addEventListener" }, {
+    t("addEventListener("),
+    i(1, "event"),
+    t({ ", evt => {", "\t" }),
+    i(2, "body"),
+    t({ "", "}" }),
+  }),
 }
