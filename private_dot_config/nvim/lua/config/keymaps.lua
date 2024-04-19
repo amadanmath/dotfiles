@@ -76,3 +76,78 @@ end, { desc = "Edit ft snippets" })
 
 -- Fix backspace: https://github.com/L3MON4D3/LuaSnip/issues/622#issuecomment-1275350599
 vim.keymap.set("s", "<bs>", "<C-o>s", { desc = "Backspace (fixed)" })
+
+
+-- Ignore diagnostics
+-- TODO: pluginify
+local function diag_ignore()
+  local lnum = vim.api.nvim_win_get_cursor(0)[1] - 1
+  local diags = vim.diagnostic.get(0, { lnum = lnum })
+  if diags then
+    vim.ui.select(
+      diags,
+      {
+        prompt = "Diagnostic to ignore:",
+        format_item = function(diag)
+          return diag.message .. " [" .. diag.code .. "]"
+        end,
+      },
+      function(choice)
+        if not choice then
+          return
+        end
+        local where, prefix, suffix, joiner = unpack(vim.g.diag_ignore[vim.bo.filetype])
+        if not joiner then
+          joiner = ', '
+        end
+        local pto, col, line
+        if where == 'prevline' then
+          if lnum > 0 then
+            line = vim.api.nvim_buf_get_lines(0, lnum - 1, lnum, true)[1]
+            _, pto = string.find(line, prefix, 1, true)
+          end
+          if pto then
+            lnum = lnum - 1
+          else
+            line = vim.api.nvim_buf_get_lines(0, lnum, lnum + 1, true)[1]
+            _, col = string.find(line, '^ *')
+            local indent = string.sub(line, 1, col)
+            line = indent .. prefix .. suffix
+            vim.api.nvim_buf_set_lines(0, lnum, lnum, true, { line })
+          end
+        elseif where == 'endline' then
+          line = vim.api.nvim_buf_get_lines(0, lnum, lnum + 1, true)[1]
+          _, pto = string.find(line, prefix, 1, true)
+          if not pto then
+            col = string.len(line)
+            vim.api.nvim_buf_set_text(0, lnum, col, lnum, col, { prefix .. suffix })
+            line = line .. prefix .. suffix
+          end
+        else
+          vim.notify('Invalid option: `' .. where .. '` (allowed: `prevline`, `endline`)', vim.log.levels.ERROR)
+          return
+        end
+        if not pto then
+          pto = col + string.len(prefix)
+        end
+        local endcol = string.len(line) - string.len(suffix)
+        local ignorestr = string.sub(line, pto + 1, endcol)
+        local types = ignorestr == "" and {} or vim.split(ignorestr, joiner)
+        table.insert(types, choice.code)
+        ignorestr = table.concat(types, joiner)
+        vim.api.nvim_buf_set_text(0, lnum, pto, lnum, endcol, { ignorestr })
+      end
+    )
+  end
+end
+
+vim.g.diag_ignore = {
+  python = { 'endline', ' # type: ignore[', ']' },
+  lua = { 'prevline', '---@diagnostic disable-next-line: ', '' },
+}
+
+vim.keymap.set("n", "<leader>ci", '', {
+  desc = "Ignore a diagnostic",
+
+  callback = diag_ignore,
+})
