@@ -16,6 +16,10 @@ return {
       servers = {
         basedpyright = {
         },
+        bashls = {
+        },
+        tsserver = {
+        },
       },
     },
   },

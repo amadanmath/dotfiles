@@ -142,7 +142,7 @@ local function diag_ignore()
 end
 
 vim.g.diag_ignore = {
-  python = { 'endline', ' # type: ignore[', ']' },
+  python = { 'endline', ' # pyright: ignore[', ']' },
   lua = { 'prevline', '---@diagnostic disable-next-line: ', '' },
 }
 
