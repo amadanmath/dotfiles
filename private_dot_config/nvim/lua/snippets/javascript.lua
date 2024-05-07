@@ -40,4 +40,8 @@ return {
     i(2, "body"),
     t({ "", "}" }),
   }),
+
+  s({ trig = "qic", name = "Require node-icecream", desc = "Require node-icecream" }, {
+    t({ "const ic = require('node-icecream')({}) // NOTE: DEBUG: npm install node-icecream", "" }),
+  }),
 }

@@ -20,6 +20,6 @@ return {
   }),
 
   s({ trig = "qic", name = "Install Icecream", desc = "Install Icecream" }, {
-    t({ "import icecream; icecream.install() # XXX: DEBUG: pip install icecream", "" }),
+    t({ "import icecream; icecream.install() # NOTE: DEBUG: pip install icecream", "" }),
   }),
 }
