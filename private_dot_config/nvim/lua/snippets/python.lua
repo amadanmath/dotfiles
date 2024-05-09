@@ -2,8 +2,6 @@ local ls = require("luasnip")
 local s = ls.snippet
 local t = ls.text_node
 local i = ls.insert_node
-local extras = require("luasnip.extras")
-local n = extras.nonempty
 
 return {
   s({ trig = "fn", name = "Function", desc = "Insert a function" }, {
@@ -19,5 +17,9 @@ return {
     t("raise NotImplementedError("),
     i(1, "explanation"),
     t(") # TODO: implement this"),
+  }),
+
+  s({ trig = "qic", name = "Install Icecream", desc = "Install Icecream" }, {
+    t({ "import icecream; icecream.install() # NOTE: DEBUG: pip install icecream", "" }),
   }),
 }
