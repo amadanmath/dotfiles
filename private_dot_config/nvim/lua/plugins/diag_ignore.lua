@@ -1,9 +1,9 @@
 return {
   {
     "amadanmath/diag_ignore.nvim",
-    keys = '<leader>ci',
-    config = function(_, opts)
-      require('diag_ignore').setup(opts)
-    end,
-  },
+    keys = {
+      { '<Leader>ci', '<Plug>(diag_ignore)', mode = 'n', desc = 'Diagnostic: ignore' },
+    },
+    opts = {},
+  }
 }
