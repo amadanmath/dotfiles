@@ -57,6 +57,20 @@ return {
     version = "*", -- recommended, use latest release instead of latest commit
     lazy = true,
     ft = "markdown",
+    keys = {
+      { "<leader>ow", "<Cmd>ObsidianWorkspace<CR>",                                 mode = "n" },
+      { "<leader>oo", "<Cmd>ObsidianQuickSwitch<CR>",                               mode = "n" },
+      { "<leader>ot", "<Cmd>ObsidianTags<CR>",                                      mode = "n" },
+      { "<leader>os", "<Cmd>ObsidianSearch<CR>",                                    mode = "n" },
+      { "<leader>ol", "<Cmd>ObsidianLinks<CR>",                                     mode = "n" },
+      { "<leader>ob", "<Cmd>ObsidianBacklinks<CR>",                                 mode = "n" },
+      { "<leader>or", "<Cmd>ObsidianRename<CR>",                                    mode = "n" },
+      { "<leader>oe", "<Cmd>ObsidianExtractNote<CR>",                               mode = "v" },
+      { "<leader>ol", "<Cmd>ObsidianLink<CR>",                                      mode = "v" },
+      { "<leader>on", "<Cmd>ObsidianLinkNew<CR>",                                   mode = "v" },
+      { "<leader>o1", "<Cmd>ObsidianWorkspace personal<CR><Cmd>ObsidianSearch<CR>", mode = "n" },
+      { "<leader>o2", "<Cmd>ObsidianWorkspace aist<CR><Cmd>ObsidianSearch<CR>",     mode = "n" },
+    },
     -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
     -- event = {
     --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
@@ -67,8 +81,7 @@ return {
     dependencies = {
       -- Required.
       "nvim-lua/plenary.nvim",
-
-      -- see below for full list of optional dependencies 👇
+      "nvim-telescope/telescope.nvim",
     },
     opts = {
       workspaces = workspaces,
