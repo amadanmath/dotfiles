@@ -1,31 +1,20 @@
+local status, ts_integration = pcall(require, 'ts_context_commentstring.integrations.comment_nvim')
+local pre_hook
+if status then
+  pre_hook = ts_integration.create_pre_hook()
+end
+
 return {
-  {
-    "numToStr/Comment.nvim",
+  -- "gc" to comment visual regions/lines
+  'numToStr/Comment.nvim',
+  opts = {
+    mappings = {
+      extra = false,
+    },
     keys = {
-      { "gc", mode = { "n", "x" }, desc = "Comment (linewise)" },
-      { "gb", mode = { "n", "x" }, desc = "Comment (block)" },
+      { 'gc', mode = { 'n', 'v' }, desc = 'Comment toggle linewise' },
+      { 'gb', mode = { 'n', 'v' }, desc = 'Comment toggle blockwise' },
     },
-    opts = {
-      padding = true, -- Add a space b/w comment and the line
-      sticky = true, -- Whether the cursor should stay at its position
-      mappings = {
-        basic = true, -- Includes `gcc`, `gbc`, `gc[count]{motion}` and `gb[count]{motion}`
-        extra = true, -- Includes `gco`, `gcO`, `gcA`
-      },
-      toggler = {
-        line = "gcc", -- Line-comment toggle keymap
-        block = "gbc", -- Block-comment toggle keymap
-      },
-      opleader = {
-        line = "gc", -- Line-comment keymap
-        block = "gb", -- Block-comment keymap
-      },
-    },
-    config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require("Comment").setup({
-        pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
-      })
-    end,
+    pre_hook = pre_hook,
   },
 }

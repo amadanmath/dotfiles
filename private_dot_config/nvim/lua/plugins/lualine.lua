@@ -1,14 +1,9 @@
-local Util = require("lazyvim.util")
-
 return {
-  {
-    "nvim-lualine/lualine.nvim",
-    config = function()
-      require("lualine").setup({
-        options = {
-          theme = "catppuccin",
-        },
-      })
-    end,
+  'nvim-lualine/lualine.nvim',
+  dependencies = { 'nvim-tree/nvim-web-devicons' },
+  lazy = false,
+  opts = {
+    icons_enabled = true,
+    theme = 'auto',
   },
 }

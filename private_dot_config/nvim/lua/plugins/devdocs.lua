@@ -1,6 +1,4 @@
 return {
-  {
-    cmd = "DD",
-    "romainl/vim-devdocs",
-  },
+  cmd = 'DD',
+  'romainl/vim-devdocs',
 }
