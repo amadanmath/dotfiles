@@ -194,6 +194,7 @@ return { -- LSP Configuration & Plugins
           },
         },
       },
+      stylua = {},
     }
 
     -- Ensure the servers and tools above are installed
