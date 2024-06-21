@@ -22,7 +22,7 @@ return {
       require('dap-go').setup()
       -- NOTE: needs 'pydebug' package in the default venv
       require('dap-python').setup '~/.venv/default/bin/python'
-      -- NOTE: needs 'rdbg' gem, needs `debugger` statement as a breakpoint
+      -- NOTE: needs `debugger` statement as a breakpoint
       require('dap-ruby').setup()
 
       require('nvim-dap-virtual-text').setup {
