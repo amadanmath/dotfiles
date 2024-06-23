@@ -86,6 +86,15 @@ return {
       'markdown',
       'vim',
       'vimdoc',
+
+      'javascript',
+      'typescript',
+      'css',
+      'gitignore',
+      'http',
+      'json',
+      'scss',
+      'sql',
     },
     -- Autoinstall languages that are not installed
     auto_install = true,

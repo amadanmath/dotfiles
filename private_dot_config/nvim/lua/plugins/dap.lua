@@ -2,14 +2,14 @@ return {
   {
     'mfussenegger/nvim-dap',
     dependencies = {
-      '0000marcell/nvim-dap-ruby',
-      'mfussenegger/nvim-dap-python',
-      'leoluz/nvim-dap-go',
       'rcarriga/nvim-dap-ui',
       'theHamsta/nvim-dap-virtual-text',
       'nvim-neotest/nvim-nio',
       'williamboman/mason.nvim',
       'nvim-telescope/telescope-dap.nvim',
+      '0000marcell/nvim-dap-ruby',
+      'mfussenegger/nvim-dap-python',
+      'leoluz/nvim-dap-go',
     },
     config = function()
       local dap = require 'dap'

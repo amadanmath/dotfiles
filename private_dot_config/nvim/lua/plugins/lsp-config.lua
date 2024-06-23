@@ -195,6 +195,43 @@ return { -- LSP Configuration & Plugins
         },
       },
       stylua = {},
+
+      shellcheck = {},
+      shfmt = {},
+
+      tsserver = {
+        root_dir = function(...)
+          return require('lspconfig.util').root_pattern '.git'(...)
+        end,
+        single_file_support = false,
+        settings = {
+          typescript = {
+            includeInlayParameterNameHints = 'literal',
+            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+            includeInlayFunctionParameterTypeHints = true,
+            includeInlayVariableTypeHints = false,
+            includeInlayPropertyDeclarationTypeHints = true,
+            includeInlayFunctionLikeReturnTypeHints = true,
+            includeInlayEnumMemberValueHints = true,
+          },
+          javascript = {
+            includeInlayParameterNameHints = 'all',
+            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+            includeInlayFunctionParameterTypeHints = true,
+            includeInlayVariableTypeHints = true,
+            includeInlayPropertyDeclarationTypeHints = true,
+            includeInlayFunctionLikeReturnTypeHints = true,
+            includeInlayEnumMemberValueHints = true,
+          },
+        },
+      },
+      tailwindcss = {
+        root_dir = function(...)
+          return require('lspconfig.util').root_pattern '.git'(...)
+        end,
+      },
+      html = {},
+      cssls = {},
     }
 
     -- Ensure the servers and tools above are installed

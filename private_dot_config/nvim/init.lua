@@ -13,6 +13,18 @@ vim.g.have_nerd_font = true
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+-- Encoding
+vim.scriptencoding = 'utf-8'
+vim.opt.encoding = 'utf-8'
+vim.opt.fileencoding = 'utf-8'
+
+-- Turn off backups
+vim.opt.backup = false
+
+-- Command mode
+vim.opt.showcmd = true
+vim.opt.cmdheight = 0
+
 -- Make line numbers default
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
@@ -53,6 +65,7 @@ vim.opt.timeoutlen = 300
 -- Configure how new splits should be opened
 vim.opt.splitright = true
 vim.opt.splitbelow = true
+vim.opt.splitkeep = 'cursor'
 
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
@@ -79,7 +92,7 @@ vim.opt.showbreak = '+ '
 vim.opt.foldopen:append { 'jump' }
 
 -- List of patterns to ignore in file completion
-vim.opt.wildignore:append { 'tags', '*.pyc', '__pycache__' }
+vim.opt.wildignore:append { 'tags', '*.pyc', '__pycache__', '*/node_modules/*' }
 
 -- Usage of Alt by the OS
 vim.opt.winaltkeys = 'no'
@@ -96,8 +109,14 @@ vim.opt.softtabstop = -1
 -- Make softtabstop corespond to to shiftwidth
 vim.opt.expandtab = true
 
+-- Smart tabs detect if you are in front of the line
+vim.opt.smarttab = true
+
 -- Choose a split window for command preview commands
 vim.opt.inccommand = 'split'
+
+-- Make sure backspace deletes the correct things
+vim.opt.backspace = { 'start', 'eol', 'indent' }
 -- }}}
 
 -- Basic Keymaps {{{
