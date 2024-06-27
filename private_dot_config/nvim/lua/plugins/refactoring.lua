@@ -11,7 +11,7 @@ return {
         below = false,
         show_success_message = false,
       }
-    end, { desc = 'Refactoring: printf' })
+    end, { desc = 'Refactoring: print' })
 
     vim.keymap.set({ 'x', 'n' }, '<leader>cv', function()
       ---@diagnostic disable-next-line: missing-parameter
@@ -22,7 +22,7 @@ return {
       refactoring.debug.cleanup {
         show_success_message = true,
       }
-    end)
+    end, { desc = 'Refactoring: remove prints' })
 
     refactoring.setup(opts)
   end,
