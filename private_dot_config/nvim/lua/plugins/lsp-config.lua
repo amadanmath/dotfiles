@@ -232,6 +232,8 @@ return { -- LSP Configuration & Plugins
       },
       html = {},
       cssls = {},
+
+      basedpyright = {},
     }
 
     -- Ensure the servers and tools above are installed
