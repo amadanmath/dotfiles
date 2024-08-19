@@ -7,19 +7,27 @@ return {
     wk.setup()
 
     -- Document existing key chains
-    wk.register {
-      ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-      ['<leader>d'] = { name = '[D]AP', _ = 'which_key_ignore' },
-      ['<leader>ds'] = { name = '[S]earch (Telescope)', _ = 'which_key_ignore' },
-      ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-      ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
-      ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
-      ['<leader>x'] = { name = 'Trouble', _ = 'which_key_ignore' },
-      ['<leader>o'] = { name = '[O]bsidian', _ = 'which_key_ignore' },
-    }
+    wk.add({
+      { "<leader>c", group = "[C]ode" },
+      { "<leader>c_", hidden = true },
+      { "<leader>d", group = "[D]AP" },
+      { "<leader>d_", hidden = true },
+      { "<leader>ds", group = "[S]earch (Telescope)" },
+      { "<leader>ds_", hidden = true },
+      { "<leader>h", group = "Git [H]unk" },
+      { "<leader>h_", hidden = true },
+      { "<leader>o", group = "[O]bsidian" },
+      { "<leader>o_", hidden = true },
+      { "<leader>s", group = "[S]earch" },
+      { "<leader>s_", hidden = true },
+      { "<leader>w", group = "[W]orkspace" },
+      { "<leader>w_", hidden = true },
+      { "<leader>x", group = "Trouble" },
+      { "<leader>x_", hidden = true },
+    })
     -- visual mode
-    wk.register({
-      ['<leader>h'] = { 'Git [H]unk' },
-    }, { mode = 'v' })
+    wk.add({
+      { "<leader>h", desc = "Git [H]unk", mode = "v" },
+    })
   end,
 }

@@ -35,6 +35,7 @@
   pop = stash pop
   lg = log --graph --pretty=format:'%Cred%h%Creset%C(auto)%d%Creset %s %C(bold blue)%an%Creset %Cgreen%cr' --abbrev-commit
   lag = log --graph --pretty=format:'%Cred%h%Creset%C(auto)%d%Creset %s %C(bold blue)%an%Creset %Cgreen%cr' --abbrev-commit --all
+  lt = log --all --decorate --oneline --graph --simplify-by-decoration
   ff = flow feature
   fr = flow release
   fh = flow hotfix

@@ -1,15 +1,10 @@
 return {
   'gregorias/coerce.nvim',
-  config = function(_, opts)
-    local coerce = require 'coerce'
-    local keymap = {
-      '<leader>p',
-      '<leader>P',
-      '<leader>p',
-    }
-    for ix, mode in ipairs(coerce.default_modes) do
-      mode.keymap_prefix = keymap[ix]
-    end
-    coerce.setup(opts)
-  end,
+  opts = {
+    default_mode_keymap_prefixes = {
+      normal_mode = '<leader>p',
+      motion_mode = '<leader>P',
+      visual_mode = '<leader>p',
+    },
+  },
 }

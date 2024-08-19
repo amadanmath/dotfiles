@@ -53,6 +53,7 @@ return {
         require('telescope').load_extension 'undo'
       end,
     },
+    'mfussenegger/nvim-dap',
   },
   opts = {
     -- You can put your default mappings / updates / etc. in here
