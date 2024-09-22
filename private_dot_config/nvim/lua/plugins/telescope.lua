@@ -35,15 +35,15 @@ return {
         require('telescope').load_extension 'luasnip'
       end,
     },
-    {
-      'nvim-telescope/telescope-frecency.nvim',
-      keys = {
-        { '<leader>ss', '<cmd>Telescope frecency<cr>', desc = '[S]earch by frecency' },
-      },
-      config = function()
-        require('telescope').load_extension 'frecency'
-      end,
-    },
+    -- {
+    --   'nvim-telescope/telescope-frecency.nvim',
+    --   keys = {
+    --     { '<leader>ss', '<cmd>Telescope frecency<cr>', desc = '[S]earch by frecency' },
+    --   },
+    --   config = function()
+    --     require('telescope').load_extension 'frecency'
+    --   end,
+    -- },
     {
       'debugloop/telescope-undo.nvim',
       keys = {
