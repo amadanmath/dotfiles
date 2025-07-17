@@ -14,10 +14,22 @@
 --
 -- After installation, restart Neovim for the plugin to load automatically
 
-local backend
+local backend = ''
+local enabled = true
 
 if vim.env.TERM == 'xterm-kitty' then
   backend = 'kitty'
+elseif vim.fn.executable('ueberzug') then
+  backend = 'ueberzug'
+  local uname = vim.fn.system('uname'):gsub('\n', '')
+  if uname == 'Linux' then
+    local lines = vim.fn.readfile('/proc/version')
+    if string.find(lines[1]:lower(), 'microsoft') then
+      enabled = false
+    end
+  end
+else
+  enabled = false
 end
 
 return {
