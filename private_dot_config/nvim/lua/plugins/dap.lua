@@ -1,6 +1,33 @@
 return {
   {
     'mfussenegger/nvim-dap',
+    keys = {
+      { '<space>db', desc = 'Toggle [b]reakpoint' },
+      { '<space>dc', desc = '[C]onditional breakpoint' },
+      { '<space>dX', desc = 'Clear all breakpoints' },
+      { '<space>dt', desc = 'Go [t]o cursor' },
+      { '<space>dj', desc = 'Frame down' },
+      { '<space>dk', desc = 'Frame up' },
+      { '<space>dh', desc = '[H]over variables' },
+      { '<space>dd', desc = 'Focus frame' },
+      { '<space>dU', desc = 'Toggle [U]I' },
+      { '<space>dr', desc = 'Toggle [R]EPL' },
+      { '<space>dw', desc = 'Toggle [w]atches' },
+      { '<F1>', desc = 'Continue' },
+      { '<F2>', desc = 'Step into' },
+      { '<F3>', desc = 'Step over' },
+      { '<F4>', desc = 'Step out' },
+      { '<F5>', desc = 'Step back' },
+      { '<F10>', desc = 'Terminate' },
+      { '<F12>', desc = 'Restart' },
+      { '<leader>de', desc = '[E]val var', mode = { 'n', 'v' } },
+      { '<leader>dE', desc = '[E]val var and enter', mode = { 'n', 'v' } },
+      { '<leader>dss', desc = 'Commands' },
+      { '<leader>dsc', desc = '[C]onfigurations' },
+      { '<leader>dsb', desc = '[B]reakpoints' },
+      { '<leader>dsv', desc = '[V]ariables' },
+      { '<leader>dsf', desc = '[F]rames' },
+    },
     dependencies = {
       'rcarriga/nvim-dap-ui',
       'theHamsta/nvim-dap-virtual-text',
@@ -115,11 +142,27 @@ return {
         ui.eval(nil, { enter = true })
       end, { desc = '[E]val selection and enter' })
 
-      vim.keymap.set('n', '<leader>dss', telescope.extensions.dap.commands, { desc = 'Commands' })
-      vim.keymap.set('n', '<leader>dsc', telescope.extensions.dap.configurations, { desc = '[C]onfigurations' })
-      vim.keymap.set('n', '<leader>dsb', telescope.extensions.dap.list_breakpoints, { desc = '[B]reakpoints' })
-      vim.keymap.set('n', '<leader>dsv', telescope.extensions.dap.variables, { desc = '[V]ariables' })
-      vim.keymap.set('n', '<leader>dsf', telescope.extensions.dap.frames, { desc = '[F]rames' })
+      -- Load DAP telescope extension lazily
+      vim.keymap.set('n', '<leader>dss', function()
+        require('telescope').load_extension 'dap'
+        telescope.extensions.dap.commands()
+      end, { desc = 'Commands' })
+      vim.keymap.set('n', '<leader>dsc', function()
+        require('telescope').load_extension 'dap'
+        telescope.extensions.dap.configurations()
+      end, { desc = '[C]onfigurations' })
+      vim.keymap.set('n', '<leader>dsb', function()
+        require('telescope').load_extension 'dap'
+        telescope.extensions.dap.list_breakpoints()
+      end, { desc = '[B]reakpoints' })
+      vim.keymap.set('n', '<leader>dsv', function()
+        require('telescope').load_extension 'dap'
+        telescope.extensions.dap.variables()
+      end, { desc = '[V]ariables' })
+      vim.keymap.set('n', '<leader>dsf', function()
+        require('telescope').load_extension 'dap'
+        telescope.extensions.dap.frames()
+      end, { desc = '[F]rames' })
 
       dap.listeners.before.attach.dapui_config = function()
         ui.open()

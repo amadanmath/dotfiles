@@ -4,7 +4,6 @@ if command -v nvim >>/dev/null 2>&1; then
 	alias vimdiff="nvim -d"
 	alias view="nvim -R"
 fi
-alias vvimrc="vim ~/.vimrc"
 alias valiases="vim ~/.bash/aliases.sh && source ~/.bash/aliases.sh"
 alias rgrep="grep -r"
 alias che="chezmoi edit --watch"
@@ -37,8 +36,10 @@ v() {
 ssha() {
 	if [[ -z "$SSH_AUTH_SOCK" ]]; then
 		eval $(ssh-agent)
-		ssh-add "$@"
 	fi
+        if [[ -n "$*" ]]; then
+		ssh-add "$@"
+        fi
 }
 
 # sshcd host:dir = ssh host, then cd dir
@@ -47,4 +48,15 @@ sshcd() {
 	host="${dest%:*}"
 	dir="${dest#*:}"
 	ssh -t "$host" 'cd "'"$dir"'" ; bash -li'
+}
+
+tunnel() {
+        host="$1"
+        args=()
+        shift
+        for port in "$@"
+        do
+                args+=(-L "$port":localhost:"$port")
+        done
+        ssh -N "${args[@]}" -o ServerAliveInterval=60 -o ServerAliveCountMax=3 "$host"
 }

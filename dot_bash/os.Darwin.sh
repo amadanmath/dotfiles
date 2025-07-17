@@ -13,3 +13,12 @@ alias sayko="say -v Yuna"
 alias sayjp="say -v Kyoko"
 alias saych="say -v Ting-Ting"
 
+sshmount() {
+  remote="$1"
+  mountpoint="$2"
+  if [[ -z "$mountpoint" ]]
+  then
+    mountpoint=$(basename "$remote")
+  fi
+  sshfs "$remote" "$mountpoint" -o auto_cache,reconnect,defer_permissions,noappledouble,allow_other
+}

@@ -4,6 +4,12 @@ return {
     'nvim-lua/plenary.nvim',
     'nvim-treesitter/nvim-treesitter',
   },
+  keys = {
+    { '<leader>cp', mode = 'n', desc = 'Refactoring: print' },
+    { '<leader>cv', mode = { 'x', 'n' }, desc = 'Refactoring: print var' },
+    { '<leader>cP', mode = 'n', desc = 'Refactoring: remove prints' },
+    { '<leader>cf', mode = { 'n', 'x' }, desc = '[C]ode re[F]actor' },
+  },
   config = function(_, opts)
     local refactoring = require 'refactoring'
     vim.keymap.set('n', '<leader>cp', function()

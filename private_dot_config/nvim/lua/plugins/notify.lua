@@ -1,5 +1,6 @@
 return {
   'rcarriga/nvim-notify',
+  enabled = false, -- Disabled for testing vanilla experience
   opts = {
     timeout = 5000,
   },

@@ -2,6 +2,7 @@ return {
   -- Highlight, edit, and navigate code
   'nvim-treesitter/nvim-treesitter',
   build = ':TSUpdate',
+  event = { 'BufReadPost', 'BufNewFile' },
   dependencies = { -- {{{
     -- https://github.com/windwp/nvim-ts-autotag
     { -- nvim-ts-autotag {{{
@@ -96,8 +97,8 @@ return {
       'scss',
       'sql',
     },
-    -- Autoinstall languages that are not installed
-    auto_install = true,
+    -- Autoinstall languages that are not installed (disabled for faster startup)
+    auto_install = false,
     highlight = {
       -- enable = true,
       -- https://github.com/alker0/chezmoi.vim?tab=readme-ov-file#-can-i-use-nvim-treesitter-for-my-chezmoi-template

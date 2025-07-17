@@ -124,7 +124,13 @@ vim.opt.backspace = { 'start', 'eol', 'indent' }
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR><cmd>lua require("notify").dismiss()<CR>')
+vim.keymap.set('n', '<Esc>', function()
+  vim.cmd('nohlsearch')
+  -- Only call notify.dismiss if notify is loaded
+  if package.loaded['notify'] then
+    require('notify').dismiss()
+  end
+end)
 
 -- TODO: check if this is needed
 -- -- Diagnostic keymaps

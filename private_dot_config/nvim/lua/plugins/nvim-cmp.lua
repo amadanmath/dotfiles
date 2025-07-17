@@ -22,7 +22,7 @@ return {
         end, { desc = 'Edit [S]nippets' })
       end,
       config = function()
-        require('luasnip.loaders.from_lua').load { paths = { vim.fn.stdpath 'config' .. '/lua/snippets' } }
+        require('luasnip.loaders.from_lua').lazy_load { paths = { vim.fn.stdpath 'config' .. '/lua/snippets' } }
       end,
     },
     'saadparwaiz1/cmp_luasnip',

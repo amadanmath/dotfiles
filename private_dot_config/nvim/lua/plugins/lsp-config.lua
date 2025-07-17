@@ -8,11 +8,11 @@ return { -- LSP Configuration & Plugins
 
     -- Useful status updates for LSP.
     -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-    { 'j-hui/fidget.nvim', opts = {} },
+    -- { 'j-hui/fidget.nvim', event = 'LspAttach', opts = {} }, -- Disabled for testing
 
-    -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
+    -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
     -- used for completion, annotations and signatures of Neovim apis
-    { 'folke/neodev.nvim', opts = {} },
+    { 'folke/lazydev.nvim', opts = {} },
   },
   config = function()
     -- Brief aside: **What is LSP?**
@@ -144,7 +144,7 @@ return { -- LSP Configuration & Plugins
         -- This may be unwanted, since they displace some of your code
         if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
           map('<leader>th', function()
-            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
           end, '[T]oggle Inlay [H]ints')
         end
       end,
@@ -194,12 +194,7 @@ return { -- LSP Configuration & Plugins
           },
         },
       },
-      stylua = {},
-
-      shellcheck = {},
-      shfmt = {},
-
-      tsserver = {
+      ts_ls = {
         root_dir = function(...)
           return require('lspconfig.util').root_pattern '.git'(...)
         end,
@@ -244,10 +239,25 @@ return { -- LSP Configuration & Plugins
 
     -- You can add other tools here that you want Mason to install
     -- for you, so that they are available from within Neovim.
-    local ensure_installed = vim.tbl_keys(servers or {})
-    vim.list_extend(ensure_installed, {
-      'stylua', -- Used to format Lua code
-    })
+    -- Map lspconfig server names to Mason package names
+    local server_to_mason = {
+      ts_ls = 'typescript-language-server',
+      lua_ls = 'lua-language-server',
+      html = 'html-lsp',
+      cssls = 'css-lsp',
+      tailwindcss = 'tailwindcss-language-server',
+    }
+    
+    local ensure_installed = {}
+    for server_name, _ in pairs(servers) do
+      local mason_name = server_to_mason[server_name] or server_name
+      table.insert(ensure_installed, mason_name)
+    end
+    
+    -- Note: stylua, shellcheck, shfmt should be configured via conform.nvim or nvim-lint
+    -- vim.list_extend(ensure_installed, {
+    --   'stylua', -- Used to format Lua code
+    -- })
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
     require('mason-lspconfig').setup {

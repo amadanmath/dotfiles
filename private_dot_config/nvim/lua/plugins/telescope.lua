@@ -1,7 +1,24 @@
 return {
   -- Fuzzy Finder (files, lsp, etc)
   'nvim-telescope/telescope.nvim',
-  event = 'VimEnter',
+  cmd = 'Telescope',
+  keys = {
+    { '<leader>sh', desc = '[S]earch [H]elp' },
+    { '<leader>sk', desc = '[S]earch [K]eymaps' },
+    { '<leader>sf', desc = '[S]earch [F]iles' },
+    { '<leader>st', desc = '[S]earch [T]elescope' },
+    { '<leader>sw', desc = '[S]earch current [W]ord' },
+    { '<leader>sg', desc = '[S]earch by [G]rep' },
+    { '<leader>sd', desc = '[S]earch [D]iagnostics' },
+    { '<leader>sr', desc = '[S]earch [R]esume' },
+    { '<leader>s.', desc = '[S]earch Recent Files' },
+    { '<leader><leader>', desc = '[ ] Find existing buffers' },
+    { '<leader>/', desc = '[/] Fuzzily search in current buffer' },
+    { '<leader>s/', desc = '[S]earch [/] in Open Files' },
+    { '<leader>sn', desc = '[S]earch [N]eovim files' },
+    { '<leader>sF', desc = 'Project [S]earch [F]iles' },
+    { '<leader>sG', desc = 'Project [S]earch by [G]rep' },
+  },
   branch = '0.1.x',
   dependencies = {
     'nvim-lua/plenary.nvim',
@@ -29,11 +46,11 @@ return {
     {
       'benfowler/telescope-luasnip.nvim',
       keys = {
-        { '<leader>sp', '<cmd>Telescope luasnip<cr>', desc = '[S]earch sni[P]pets' },
+        { '<leader>sp', function()
+          require('telescope').load_extension 'luasnip'
+          require('telescope').extensions.luasnip.luasnip()
+        end, desc = '[S]earch sni[P]pets' },
       },
-      config = function()
-        require('telescope').load_extension 'luasnip'
-      end,
     },
     -- {
     --   'nvim-telescope/telescope-frecency.nvim',
@@ -47,13 +64,13 @@ return {
     {
       'debugloop/telescope-undo.nvim',
       keys = {
-        { '<leader>su', '<cmd>Telescope undo<cr>', desc = '[S]earch [U]ndo tree' },
+        { '<leader>su', function()
+          require('telescope').load_extension 'undo'
+          require('telescope').extensions.undo.undo()
+        end, desc = '[S]earch [U]ndo tree' },
       },
-      config = function()
-        require('telescope').load_extension 'undo'
-      end,
     },
-    'mfussenegger/nvim-dap',
+    -- 'mfussenegger/nvim-dap', -- Removed to prevent eager loading
   },
   opts = {
     -- You can put your default mappings / updates / etc. in here
@@ -124,8 +141,9 @@ return {
     -- Enable Telescope extensions if they are installed
     pcall(telescope.load_extension, 'fzf')
     pcall(telescope.load_extension, 'ui-select')
-    pcall(telescope.load_extension, 'dap')
-    pcall(telescope.load_extension, 'refactoring')
+    -- Load other extensions lazily when needed
+    -- pcall(telescope.load_extension, 'dap')
+    -- pcall(telescope.load_extension, 'refactoring')
 
     -- See `:help telescope.builtin`
     local builtin = require 'telescope.builtin'
@@ -139,7 +157,11 @@ return {
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
     vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
-    vim.keymap.set({ 'n', 'x' }, '<leader>cf', telescope.extensions.refactoring.refactors, { desc = '[C]ode re[F]actor' })
+    -- Load refactoring extension lazily
+    vim.keymap.set({ 'n', 'x' }, '<leader>cf', function()
+      pcall(telescope.load_extension, 'refactoring')
+      telescope.extensions.refactoring.refactors()
+    end, { desc = '[C]ode re[F]actor' })
     -- TODO: use `cwd = require('project').get_project_root()`
 
     -- Slightly advanced example of overriding default behavior and theme
