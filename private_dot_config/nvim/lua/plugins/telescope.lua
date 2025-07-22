@@ -73,6 +73,12 @@ return {
     -- 'mfussenegger/nvim-dap', -- Removed to prevent eager loading
   },
   opts = {
+    defaults = {
+      mappings = {
+        i = {},
+        n = {},
+      },
+    },
     -- You can put your default mappings / updates / etc. in here
     --  All the info you're looking for is in `:help telescope.setup()`
     --
@@ -108,9 +114,16 @@ return {
     -- Telescope picker. This is really useful to discover what Telescope can
     -- do as well as how to actually do it!
 
+    -- Add trouble integration if available
+    local trouble_ok, trouble = pcall(require, 'trouble.sources.telescope')
+    if trouble_ok then
+      opts.defaults.mappings.i["<C-t>"] = trouble.open
+      opts.defaults.mappings.n["<C-t>"] = trouble.open
+    end
+
     -- integrate flash.nvim
-    local ok, flash = pcall(require, 'flash')
-    if ok then
+    local flash_ok, flash = pcall(require, 'flash')
+    if flash_ok then
       local function flash_jump(prompt_bufnr)
         flash.jump {
           pattern = '^',
@@ -129,9 +142,8 @@ return {
           end,
         }
       end
-      opts.defaults = vim.tbl_deep_extend('force', opts.defaults or {}, {
-        mappings = { n = { s = flash_jump }, i = { ['<c-s>'] = flash_jump } },
-      })
+      opts.defaults.mappings.n.s = flash_jump
+      opts.defaults.mappings.i['<c-s>'] = flash_jump
     end
     -- [[ Configure Telescope ]]
     -- See `:help telescope` and `:help telescope.setup()`
