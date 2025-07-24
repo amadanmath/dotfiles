@@ -105,6 +105,9 @@ return { -- LSP Configuration & Plugins
         --  See `:help K` for why this keymap.
         map('K', vim.lsp.buf.hover, 'Hover Documentation')
 
+        -- Show diagnostic popup for current line
+        map('<leader>xx', vim.diagnostic.open_float, 'Show line diagnostics')
+
         -- WARN: This is not Goto Definition, this is Goto Declaration.
         --  For example, in C this would take you to the header.
         map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -152,10 +155,10 @@ return { -- LSP Configuration & Plugins
 
     -- LSP servers and clients are able to communicate to each other what features they support.
     --  By default, Neovim doesn't support everything that is in the LSP specification.
-    --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
-    --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
+    --  When you add blink-cmp, luasnip, etc. Neovim now has *more* capabilities.
+    --  So, we create new capabilities with blink-cmp, and then broadcast that to the servers.
     local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+    capabilities = vim.tbl_deep_extend('force', capabilities, require('blink.cmp').get_lsp_capabilities())
 
     -- Enable the following language servers
     --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -169,7 +172,26 @@ return { -- LSP Configuration & Plugins
     local servers = {
       -- clangd = {},
       -- gopls = {},
-      -- pyright = {},
+      pyright = {
+        -- Disable pyright's formatting and code actions, keep only diagnostics
+        settings = {
+          python = {
+            analysis = {
+              autoSearchPaths = true,
+              useLibraryCodeForTypes = true,
+              diagnosticMode = "workspace",
+            },
+          },
+        },
+      },
+      ruff = {
+        -- Ruff provides excellent code actions and formatting
+        init_options = {
+          settings = {
+            args = {},
+          },
+        },
+      },
       -- rust_analyzer = {},
       -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
       --
@@ -194,7 +216,7 @@ return { -- LSP Configuration & Plugins
           },
         },
       },
-      ts_ls = {
+      tsserver = {
         root_dir = function(...)
           return require('lspconfig.util').root_pattern '.git'(...)
         end,
@@ -227,6 +249,7 @@ return { -- LSP Configuration & Plugins
       },
       html = {},
       cssls = {},
+      bashls = {},
     }
 
     -- Ensure the servers and tools above are installed
@@ -241,11 +264,14 @@ return { -- LSP Configuration & Plugins
     -- for you, so that they are available from within Neovim.
     -- Map lspconfig server names to Mason package names
     local server_to_mason = {
-      ts_ls = 'typescript-language-server',
+      tsserver = 'typescript-language-server',
       lua_ls = 'lua-language-server',
       html = 'html-lsp',
       cssls = 'css-lsp',
       tailwindcss = 'tailwindcss-language-server',
+      pyright = 'pyright',
+      ruff = 'ruff',
+      bashls = 'bash-language-server',
     }
     
     local ensure_installed = {}

@@ -17,5 +17,8 @@ return {
 
     -- You can configure highlights by doing something like:
     vim.cmd.hi 'Comment gui=none'
+    
+    -- Custom highlights
+    vim.api.nvim_set_hl(0, 'NormalFloat', { fg = '#c0caf5', bg = '#0f0f0f' })
   end,
 }
