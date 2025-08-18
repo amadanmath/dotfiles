@@ -7,6 +7,9 @@
 [[ -x "/Applications/DJV2.app/Contents/MacOS/DJV2" ]] &&
   alias djv=/Applications/DJV2.app/Contents/MacOS/DJV2
 
+[[ -d "/opt/homebrew" ]] &&
+  export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+
 
 # Apple TTS
 alias sayko="say -v Yuna"
