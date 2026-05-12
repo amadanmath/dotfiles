@@ -1,0 +1,10 @@
+# Prepend shlvl to the default module order.
+format = "$shlvl$all"
+
+[hostname]
+ssh_only = false
+style = "bright-black bold"
+
+[shlvl]
+disabled = false
+threshold = 2

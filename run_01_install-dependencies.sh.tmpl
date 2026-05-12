@@ -1,0 +1,341 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+
+{{ if eq .chezmoi.os "darwin" -}}
+
+# --- Xcode Command Line Tools ---
+if ! xcode-select -p &>/dev/null; then
+  echo "Installing Xcode Command Line Tools..."
+  xcode-select --install 2>&1 || true
+  echo "Waiting for installation (complete the dialog if one appeared)..."
+  until xcode-select -p &>/dev/null; do
+    sleep 10
+  done
+fi
+
+# --- Homebrew ---
+if ! command -v brew &>/dev/null; then
+  echo "Installing Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+# Ensure brew is in PATH for the rest of this script (needed on Apple Silicon).
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# Find the installed formulas
+installed_formulas=($(brew list --formula))
+declare -A has_formula
+for f in ${installed_formulas[@]}; do
+  has_formula[$f]=1
+done
+installed_casks=($(brew list --cask))
+declare -A has_cask
+for c in ${installed_casks[@]}; do
+  has_cask[$c]=1
+done
+
+# --- git ---
+if [[ -z ${has_formula[git]:-} ]]; then
+  echo "Installing git via Homebrew..."
+  brew install git
+fi
+
+# --- NeoVim ---
+if [[ -z ${has_formula[neovim]:-} ]]; then
+  echo "Installing NeoVim via Homebrew..."
+  brew install neovim
+fi
+
+# --- Kitty terminal ---
+if [[ -z ${has_cask[kitty]:-} ]]; then
+  echo "Installing Kitty terminal via Homebrew..."
+  brew install --cask kitty
+fi
+
+# --- BitWarden desktop app ---
+if [[ -z ${has_cask[bitwarden]:-} ]]; then
+  echo "Installing BitWarden desktop via Homebrew..."
+  brew install --cask bitwarden
+fi
+
+# --- BitWarden CLI ---
+if [[ -z ${has_formula[bitwarden-cli]:-} ]]; then
+  echo "Installing BitWarden CLI via Homebrew..."
+  brew install bitwarden-cli
+fi
+
+# --- AWS CLI ---
+if [[ -z ${has_formula[awscli]:-} ]]; then
+  echo "Installing AWS CLI via Homebrew..."
+  brew install awscli
+fi
+
+# --- jq ---
+if [[ -z ${has_formula[jq]:-} ]]; then
+  echo "Installing jq via Homebrew..."
+  brew install jq
+fi
+
+# --- ripgrep ---
+if [[ -z ${has_formula[ripgrep]:-} ]]; then
+  echo "Installing ripgrep..."
+  brew install ripgrep
+fi
+
+# --- tree-sitter CLI ---
+if [[ -z ${has_formula[tree-sitter-cli]:-} ]]; then
+  echo "Installing tree-sitter CLI..."
+  brew install tree-sitter-cli
+fi
+
+# --- GNU coreutils (gls, gcp, gmv, etc.) ---
+if [[ -z ${has_formula[coreutils]:-} ]]; then
+  echo "Installing GNU coreutils..."
+  brew install coreutils
+fi
+
+# --- direnv ---
+if [[ -z ${has_formula[direnv]:-} ]]; then
+  echo "Installing direnv via Homebrew..."
+  brew install direnv
+fi
+
+# --- Starship ---
+if [[ -z ${has_formula[starship]:-} ]]; then
+  echo "Installing Starship..."
+  brew install starship
+fi
+
+# --- Monofur Nerd Font ---
+if [[ -z ${has_cask[font-monofur-nerd-font]:-} ]]; then
+  echo "Installing Monofur Nerd Font..."
+  brew install --cask font-monofur-nerd-font
+fi
+
+# --- ImageMagick ---
+if [[ -z ${has_formula[imagemagick]:-} ]]; then
+  echo "Installing ImageMagick..."
+  brew install imagemagick
+fi
+
+# --- luarocks ---
+if [[ -z ${has_formula[luarocks]:-} ]]; then
+  echo "Installing luarocks..."
+  brew install luarocks
+fi
+
+# --- magick luarock (for image.nvim) ---
+if ! luarocks --lua-version 5.1 list 2>/dev/null | grep -q "^magick"; then
+  echo "Installing magick luarock..."
+  luarocks --lua-version 5.1 install magick
+fi
+
+# --- uv ---
+if [[ -z ${has_formula[uv]:-} ]]; then
+  echo "Installing uv..."
+  brew install uv
+fi
+
+
+{{ else if eq .chezmoi.os "linux" -}}
+
+ARCH=$(uname -m)
+case "$ARCH" in
+  x86_64)  ARCH_GO="amd64"; ARCH_NVIM="x86_64" ;;
+  aarch64) ARCH_GO="arm64"; ARCH_NVIM="arm64" ;;
+  *)       echo "Unsupported architecture: $ARCH" >&2; exit 1 ;;
+esac
+
+mkdir -p "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
+
+TMP=$(mktemp -d)
+trap "rm -rf '$TMP'" EXIT
+
+# python3 is universally available on Ubuntu and avoids a dependency on unzip.
+unzip_to() { python3 -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])" "$1" "$2"; }
+
+# --- curl bootstrap (via Python3 if not present) ---
+if ! command -v curl &>/dev/null; then
+  if ! command -v python3 &>/dev/null; then
+    echo "Error: neither curl nor python3 is available. Cannot bootstrap." >&2
+    exit 1
+  fi
+  echo "Bootstrapping curl via Python3..."
+  _curl_arch=$([ "$ARCH" = "x86_64" ] && echo "amd64" || echo "aarch64")
+  python3 -c "
+import urllib.request, os, stat
+url = 'https://github.com/moparisthebest/static-curl/releases/latest/download/curl-${_curl_arch}'
+dest = os.path.expanduser('~/.local/bin/curl')
+urllib.request.urlretrieve(url, dest)
+os.chmod(dest, 0o755)
+print('Installed: ' + dest)
+"
+fi
+
+# --- jq (rootless) — installed first so gh_latest can use it ---
+if ! command -v jq &>/dev/null; then
+  echo "Downloading jq for linux/${ARCH_GO}..."
+  curl -fsSL \
+    "https://github.com/jqlang/jq/releases/latest/download/jq-linux-${ARCH_GO}" \
+    -o "$HOME/.local/bin/jq"
+  chmod 755 "$HOME/.local/bin/jq"
+  echo "Installed: $(jq --version)"
+fi
+
+# Returns the version string from the latest GitHub release tag, stripping an optional prefix.
+gh_latest() { curl -fsSL "https://api.github.com/repos/$1/releases/latest" | jq -r ".tag_name | ltrimstr(\"${2:-}\")"; }
+
+# --- NeoVim (rootless) ---
+if ! command -v nvim &>/dev/null; then
+  echo "Downloading NeoVim for linux/${ARCH_NVIM}..."
+  curl -fsSL \
+    "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-${ARCH_NVIM}.tar.gz" \
+    -o "$TMP/nvim.tar.gz"
+  mkdir -p "$HOME/.local/opt"
+  tar -xzf "$TMP/nvim.tar.gz" -C "$HOME/.local/opt/"
+  mkdir -p "$HOME/.local/bin"
+  ln -sf "$HOME/.local/opt/nvim-linux-${ARCH_NVIM}/bin/nvim" "$HOME/.local/bin/nvim"
+  echo "Installed: $("$HOME/.local/bin/nvim" --version | head -1)"
+fi
+
+# --- BitWarden CLI (x86_64 only) ---
+if ! command -v bw &>/dev/null; then
+  if [[ "$ARCH" != "x86_64" ]]; then
+    echo "BitWarden CLI: no official binary for $ARCH, skipping." >&2
+  else
+    BW_VERSION=$(gh_latest bitwarden/clients 'cli-v')
+    echo "Downloading BitWarden CLI v${BW_VERSION}..."
+    curl -fsSL \
+      "https://github.com/bitwarden/clients/releases/download/cli-v${BW_VERSION}/bw-linux-${BW_VERSION}.zip" \
+      -o "$TMP/bw.zip"
+    unzip_to "$TMP/bw.zip" "$TMP/"
+    mkdir -p "$HOME/.local/bin"
+    install -m755 "$TMP/bw" "$HOME/.local/bin/bw"
+    echo "Installed: $("$HOME/.local/bin/bw" --version)"
+  fi
+fi
+
+# --- AWS CLI (rootless) ---
+if ! command -v aws &>/dev/null; then
+  echo "Downloading AWS CLI for linux/${ARCH}..."
+  curl -fsSL \
+    "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH}.zip" \
+    -o "$TMP/awscli.zip"
+  unzip_to "$TMP/awscli.zip" "$TMP/"
+  "$TMP/aws/install" --install-dir "$HOME/.local/aws-cli" --bin-dir "$HOME/.local/bin"
+  echo "Installed: $("$HOME/.local/bin/aws" --version)"
+fi
+
+# --- atch (rootless) ---
+if ! command -v atch &>/dev/null; then
+  ATCH_VERSION=$(gh_latest mobydeck/atch)
+  echo "Downloading atch ${ATCH_VERSION} for linux/${ARCH_GO}..."
+  curl -fsSL \
+    "https://github.com/mobydeck/atch/releases/download/${ATCH_VERSION}/atch-linux-${ARCH_GO}.tgz" \
+    -o "$TMP/atch.tgz"
+  mkdir -p "$TMP/atch-extract"
+  tar -xzf "$TMP/atch.tgz" -C "$TMP/atch-extract/"
+  mkdir -p "$HOME/.local/bin"
+  install -m755 "$TMP/atch-extract/atch" "$HOME/.local/bin/atch"
+  echo "Installed: $("$HOME/.local/bin/atch" --version 2>&1 | head -1)"
+fi
+
+# --- direnv (rootless) ---
+if ! command -v direnv &>/dev/null; then
+  echo "Downloading direnv for linux/${ARCH_GO}..."
+  curl -fsSL \
+    "https://github.com/direnv/direnv/releases/latest/download/direnv.linux-${ARCH_GO}" \
+    -o "$HOME/.local/bin/direnv"
+  chmod 755 "$HOME/.local/bin/direnv"
+  echo "Installed: $(direnv --version)"
+fi
+
+# --- ripgrep (rootless) ---
+if ! command -v rg &>/dev/null; then
+  case "$ARCH" in
+    x86_64)  RG_TRIPLE="x86_64-unknown-linux-musl" ;;
+    aarch64) RG_TRIPLE="aarch64-unknown-linux-gnu" ;;
+  esac
+  RG_VERSION=$(gh_latest BurntSushi/ripgrep)
+  echo "Downloading ripgrep ${RG_VERSION} for linux/${ARCH}..."
+  curl -fsSL \
+    "https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/ripgrep-${RG_VERSION}-${RG_TRIPLE}.tar.gz" \
+    -o "$TMP/rg.tar.gz"
+  tar -xzf "$TMP/rg.tar.gz" -C "$TMP/"
+  install -m755 "$TMP/ripgrep-${RG_VERSION}-${RG_TRIPLE}/rg" "$HOME/.local/bin/rg"
+  echo "Installed: $(rg --version | head -1)"
+fi
+
+# --- tree-sitter CLI (rootless) ---
+if ! command -v tree-sitter &>/dev/null; then
+  case "$ARCH" in
+    x86_64)  TS_ARCH="x64" ;;
+    aarch64) TS_ARCH="arm64" ;;
+  esac
+  TS_VERSION=$(gh_latest tree-sitter/tree-sitter)
+  echo "Downloading tree-sitter CLI ${TS_VERSION} for linux/${TS_ARCH}..."
+  curl -fsSL \
+    "https://github.com/tree-sitter/tree-sitter/releases/download/${TS_VERSION}/tree-sitter-linux-${TS_ARCH}.gz" \
+    -o "$TMP/tree-sitter.gz"
+  gunzip "$TMP/tree-sitter.gz"
+  install -m755 "$TMP/tree-sitter" "$HOME/.local/bin/tree-sitter"
+  echo "Installed: $(tree-sitter --version)"
+fi
+
+# --- Starship (rootless) ---
+if ! command -v starship &>/dev/null; then
+  echo "Downloading Starship for linux/${ARCH}..."
+  curl -fsSL \
+    "https://github.com/starship/starship/releases/latest/download/starship-${ARCH}-unknown-linux-musl.tar.gz" \
+    -o "$TMP/starship.tar.gz"
+  tar -xzf "$TMP/starship.tar.gz" -C "$TMP/"
+  install -m755 "$TMP/starship" "$HOME/.local/bin/starship"
+  echo "Installed: $(starship --version)"
+fi
+
+# --- ImageMagick + luarocks + magick luarock (for image.nvim) ---
+if ! luarocks --lua-version 5.1 list 2>/dev/null | grep -q "^magick"; then
+  missing_pkgs=()
+  dpkg -l imagemagick 2>/dev/null | grep -q "^ii" || missing_pkgs+=(imagemagick)
+  dpkg -l libmagickwand-dev 2>/dev/null | grep -q "^ii" || missing_pkgs+=(libmagickwand-dev)
+  dpkg -l luarocks 2>/dev/null | grep -q "^ii" || missing_pkgs+=(luarocks)
+  if [[ ${#missing_pkgs[@]} -gt 0 ]]; then
+    echo "Warning: image.nvim requires: ${missing_pkgs[*]}. Install them manually (apt), then re-run chezmoi apply." >&2
+  elif command -v luarocks &>/dev/null; then
+    echo "Installing magick luarock..."
+    luarocks --lua-version 5.1 install magick
+  fi
+fi
+
+# --- Monofur Nerd Font (rootless) ---
+if ! fc-list | grep -qi monofur; then
+  echo "Downloading Monofur Nerd Font..."
+  curl -fsSL \
+    "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Monofur.zip" \
+    -o "$TMP/Monofur.zip"
+  mkdir -p "$HOME/.local/share/fonts"
+  unzip_to "$TMP/Monofur.zip" "$HOME/.local/share/fonts/"
+  fc-cache -f
+  echo "Installed Monofur Nerd Font."
+fi
+
+# --- uv ---
+if ! command -v uv &>/dev/null; then
+  echo "Installing uv..."
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+
+{{ end -}}
+
+# Cross-platform
+# --- RVM ---
+if [[ ! -d "$HOME/.rvm" ]]; then
+  echo "Installing RVM..."
+  curl -sSL https://get.rvm.io | bash -s stable
+fi

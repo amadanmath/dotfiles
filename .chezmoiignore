@@ -1,0 +1,80 @@
+# Obviously
+/.config/chezmoi
+
+# Repository README
+/README.md
+
+# Stuff for work, stuff not for work, transient stuff
+/work
+/xwork
+/tmp
+
+# Individual app/lang folders
+/go
+/obsidian
+
+# Local stuff
+/.local
+/.gitconfig_local
+
+# Secrets (never commit)
+/.aws/credentials.json
+/.kaggle
+.envrc
+/.ssh
+
+# Shell stuff not managed here
+/.mkshrc
+/.zlogin
+
+# Shared public key stuff by Mozilla and others
+/.pki
+
+# X credentials
+/.Xauthority
+
+# wget stuff
+/.wget-hsts
+
+# Audio (PulseAudio)
+/.config/pulse
+
+# Various caches and generated data
+/.cache
+/.mypy_cache
+/.luarocks
+/.zcompdump
+/.zsh_sessions
+/.config/nvim/lazy-lock.json
+
+# Various history files
+/.bash_history
+/.zsh_history
+/.python_history
+/.lesshst
+/.irb-history
+/.sqlite_history
+/.viminfo
+
+# Various stores / package managers / environments
+/.rvm
+/.npm
+/.venv
+/.docker
+
+# Various settings (machine-local state)
+/.config/configstore
+/.config/dconf
+/.config/obsidian
+
+# NVIDIA stuff
+/.nv
+
+# macOS / system junk
+.DS_Store
+.Trash
+/.CFUserTextEncoding
+
+# Various housecleaning flags
+/.motd_shown
+/.sudo_as_admin_successful

@@ -1,0 +1,16 @@
+{{ if eq .chezmoi.os "darwin" -}}
+# Prefer GNU coreutils over BSD equivalents.
+for _gnubin in /opt/homebrew/opt/coreutils/libexec/gnubin /usr/local/opt/coreutils/libexec/gnubin; do
+  [[ -d "$_gnubin" ]] && path=("$_gnubin" $path) && break
+done
+unset _gnubin
+
+# Apple TTS
+alias sayko="say -v Yuna"
+alias sayjp="say -v Kyoko"
+alias saych="say -v Ting-Ting"
+
+{{ else if eq .chezmoi.os "linux" -}}
+# Linux-specific config.
+
+{{ end -}}
