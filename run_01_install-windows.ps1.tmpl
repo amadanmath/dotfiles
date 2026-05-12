@@ -1,0 +1,67 @@
+{{ if eq .chezmoi.os "windows" -}}
+# --- Scoop ---
+if (!(Get-Command scoop -ErrorAction SilentlyContinue)) {
+    Write-Host "Installing Scoop..."
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+    Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+    # Refresh PATH so scoop is usable in this session
+    $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" +
+                [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
+}
+
+# --- Scoop buckets ---
+# bucket add is idempotent: prints "already exists" and exits 0 if present
+scoop bucket add extras
+scoop bucket add nerd-fonts
+
+# --- Tools ---
+# scoop install is idempotent: skips already-installed packages
+scoop install git neovim jq ripgrep starship imagemagick python uv direnv
+scoop install tree-sitter   # verify name in `scoop search tree-sitter` if this fails
+scoop install msys2
+
+scoop install bitwarden-cli
+scoop install aws
+
+# --- Font ---
+scoop install nerd-fonts/Monofur-NF
+
+# --- Ghostscript (ImageMagick PDF support) ---
+scoop install ghostscript
+
+# --- ~/.local/bin on PATH (shared with MSYS2/zsh) ---
+$localBin = "$env:USERPROFILE\.local\bin"
+New-Item -ItemType Directory -Force -Path $localBin | Out-Null
+$userPath = [System.Environment]::GetEnvironmentVariable("PATH", "User")
+if ($userPath -notlike "*$localBin*") {
+    [System.Environment]::SetEnvironmentVariable("PATH", "$localBin;$userPath", "User")
+    $env:PATH = "$localBin;$env:PATH"
+}
+
+# --- Post-install registry entries ---
+reg import "$(scoop prefix 7zip)\install-context.reg"
+reg import "$(scoop prefix git)\install-associations.reg"
+reg import "$(scoop prefix git)\install-context.reg"
+reg import "$(scoop prefix python)\install-pep-514.reg"
+
+# --- MSYS2: install zsh and use the Windows user profile as home ---
+$msys2Root = $null
+try { $msys2Root = (scoop prefix msys2 2>$null) } catch {}
+
+if ($msys2Root -and (Test-Path $msys2Root)) {
+    $msys2Shell = Join-Path $msys2Root "msys2_shell.cmd"
+
+    if (!(Test-Path (Join-Path $msys2Root "usr\bin\zsh.exe"))) {
+        Write-Host "Installing zsh in MSYS2..."
+        & $msys2Shell -defterm -here -no-start -msys2 -c "pacman -S --noconfirm zsh"
+    }
+
+    # Make MSYS2 use C:\Users\<you> as home so chezmoi-managed dotfiles are found
+    $nsswitch = Join-Path $msys2Root "etc\nsswitch.conf"
+    if ((Test-Path $nsswitch) -and ((Get-Content $nsswitch -Raw) -match 'db_home: cygwin desc')) {
+        Write-Host "Configuring MSYS2 to use Windows home directory..."
+        (Get-Content $nsswitch -Raw -Encoding utf8) -replace 'db_home: cygwin desc', 'db_home: windows' |
+            Set-Content $nsswitch -Encoding utf8
+    }
+}
+{{ end -}}

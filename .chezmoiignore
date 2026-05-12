@@ -1,6 +1,16 @@
 # Obviously
 /.config/chezmoi
 
+# Windows-only files: only deploy on Windows
+{{ if ne .chezmoi.os "windows" -}}
+Documents/
+run_01_install-windows.ps1
+{{- end }}
+# On Windows, skip the POSIX install script (use the PowerShell one instead)
+{{ if eq .chezmoi.os "windows" -}}
+run_01_install-dependencies.sh
+{{- end }}
+
 # Repository README
 /README.md
 
@@ -77,6 +87,12 @@
 .DS_Store
 .Trash
 /.CFUserTextEncoding
+
+# Windows system / generated files
+/AppData
+/scoop
+NTUSER.DAT*
+Desktop.ini
 
 # Various housecleaning flags
 /.motd_shown
