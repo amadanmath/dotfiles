@@ -20,12 +20,29 @@ scoop install git neovim jq ripgrep starship imagemagick python uv direnv
 scoop install tree-sitter   # verify name in `scoop search tree-sitter` if this fails
 scoop install msys2
 
-# --- Extras bucket ---
-scoop install extras/bitwarden-cli
-scoop install aws           # AWS CLI v2; try extras/aws if not found in main
+scoop install bitwarden-cli
+scoop install aws
 
 # --- Font ---
 scoop install nerd-fonts/Monofur-NF
+
+# --- Ghostscript (ImageMagick PDF support) ---
+scoop install ghostscript
+
+# --- ~/.local/bin on PATH (shared with MSYS2/zsh) ---
+$localBin = "$env:USERPROFILE\.local\bin"
+New-Item -ItemType Directory -Force -Path $localBin | Out-Null
+$userPath = [System.Environment]::GetEnvironmentVariable("PATH", "User")
+if ($userPath -notlike "*$localBin*") {
+    [System.Environment]::SetEnvironmentVariable("PATH", "$localBin;$userPath", "User")
+    $env:PATH = "$localBin;$env:PATH"
+}
+
+# --- Post-install registry entries ---
+reg import "$(scoop prefix 7zip)\install-context.reg"
+reg import "$(scoop prefix git)\install-associations.reg"
+reg import "$(scoop prefix git)\install-context.reg"
+reg import "$(scoop prefix python)\install-pep-514.reg"
 
 # --- MSYS2: install zsh and use the Windows user profile as home ---
 $msys2Root = $null
@@ -47,6 +64,4 @@ if ($msys2Root -and (Test-Path $msys2Root)) {
             Set-Content $nsswitch -Encoding utf8
     }
 }
-{{ else -}}
-# Non-Windows: this script is a no-op.
 {{ end -}}

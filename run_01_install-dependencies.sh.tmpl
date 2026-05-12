@@ -1,3 +1,4 @@
+{{ if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -348,3 +349,4 @@ if [[ ! -d "$HOME/.rvm" ]]; then
   echo "Installing RVM..."
   curl -sSL https://get.rvm.io | bash -s stable
 fi
+{{ end -}}
