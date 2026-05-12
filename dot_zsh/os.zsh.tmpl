@@ -13,4 +13,12 @@ alias saych="say -v Ting-Ting"
 {{ else if eq .chezmoi.os "linux" -}}
 # Linux-specific config.
 
+{{ else if eq .chezmoi.os "windows" -}}
+# MSYS2 / zsh on Windows: add Scoop shims to PATH so Windows-installed tools are reachable
+if [[ -n "${MSYSTEM:-}" ]] && command -v cygpath &>/dev/null; then
+  _scoop=$(cygpath -u "$USERPROFILE/scoop/shims" 2>/dev/null)
+  [[ -d "$_scoop" ]] && path=("$_scoop" $path)
+  unset _scoop
+fi
+
 {{ end -}}
