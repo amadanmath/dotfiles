@@ -2,6 +2,8 @@ aliases() { $EDITOR ~/.zsh/aliases.zsh && source ~/.zsh/aliases.zsh }
 
 ls --color=auto /dev/null &>/dev/null 2>&1 && alias ls='ls --color=auto'
 
+command -v nvim &>/dev/null && alias vim=nvim
+
 command -v kitten &>/dev/null && alias ssh="kitten ssh"
 
 sshcd() {
