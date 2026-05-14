@@ -1,0 +1,6 @@
+{{ if eq .chezmoi.os "windows" -}}
+# profile hash: {{ include "private_dot_config/powershell/profile.ps1" | sha256sum }}
+$target = $PROFILE
+New-Item -ItemType Directory -Force -Path (Split-Path $target) | Out-Null
+Copy-Item -Path "$env:USERPROFILE\.config\powershell\profile.ps1" -Destination $target -Force
+{{ end -}}

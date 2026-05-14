@@ -1,5 +1,9 @@
 [include]
   path = ~/.gitconfig_local
+{{ if eq .chezmoi.os "windows" -}}
+[includeIf "gitdir:~/scoop/buckets/"]
+  path = ~/.config/git/scoop
+{{ end -}}
 
 [user]
   name = Goran Topic
