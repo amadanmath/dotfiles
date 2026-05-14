@@ -42,6 +42,9 @@ export EDITOR=nvim
 # Machine-local config, not tracked by chezmoi.
 [[ -f "$HOME/.zsh/local.zsh" ]] && source "$HOME/.zsh/local.zsh"
 
+# Path modifications
+[[ -d "$HOME/.local/node/bin"  ]] && path=("$HOME/.local/node/bin" $path)
+
 # RVM — must be loaded after anything else that touches PATH or the prompt.
 if [[ -d "$HOME/.rvm" ]]; then
   path=($path "$HOME/.rvm/bin")

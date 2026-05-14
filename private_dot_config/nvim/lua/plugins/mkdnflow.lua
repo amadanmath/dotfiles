@@ -15,18 +15,30 @@ return {
         paths = false,
         tables = true,
         yaml = false,
-        cmp = false,
+        completion = false, -- ✅ renamed from cmp
       },
+
       to_do = {
-        symbols = {
-          " ", "/", "x", "-", "<", ">",
-          "?", "!", "*", '"', "l", "b", "i", "S", "I", "p", "c", "f", "k", "w", "u", "d",
+        -- ✅ new format (replaces: symbols, not_started, in_progress, complete)
+        statuses = {
+          not_started = { marker = " " },
+          in_progress = { marker = "/" },
+          complete = { marker = "x" },
         },
-        update_parents = true,
-        not_started = " ",
-        in_progress = "/",
-        complete = "x",
+
+        -- ✅ required in new API
+        status_order = {
+          "not_started",
+          "in_progress",
+          "complete",
+        },
+
+        -- ✅ replaces update_parents
+        status_propagation = {
+          up = true,
+        },
       },
+
       mappings = {
         MkdnEnter = false,
         MkdnTab = false,
