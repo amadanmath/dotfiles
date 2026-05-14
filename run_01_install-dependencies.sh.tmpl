@@ -46,6 +46,12 @@ if [[ -z ${has_formula[git]:-} ]]; then
   brew install git
 fi
 
+# --- node ---
+if [[ -z ${has_formula[node]:-} ]]; then
+  echo "Installing node via Homebrew..."
+  brew install node
+fi
+
 # --- NeoVim ---
 if [[ -z ${has_formula[neovim]:-} ]]; then
   echo "Installing NeoVim via Homebrew..."
@@ -199,6 +205,36 @@ fi
 
 # Returns the version string from the latest GitHub release tag, stripping an optional prefix.
 gh_latest() { curl -fsSL "https://api.github.com/repos/$1/releases/latest" | jq -r ".tag_name | ltrimstr(\"${2:-}\")"; }
+
+get_latest_node_lts() {
+    
+    curl -s https://nodejs.org/dist/index.json \
+        | jq -r '[.[] | select(.lts != false)][0].version'
+
+}
+
+# --- node ---
+if [[ ! -x "$HOME/.local/node/bin/node" ]]; then
+    node_version=$(get_latest_node_lts)
+    curdir=$(pwd)
+    cd "$HOME/tmp/"
+
+    arch=$(uname -m)
+    case "$arch" in
+        x86_64) node_arch="x64" ;;
+        aarch64) node_arch="arm64" ;;
+        *) echo "Unsupported architecture: $arch"; exit 1 ;;
+    esac
+
+    curl -LO "https://nodejs.org/dist/$node_version/node-$node_version-linux-$node_arch.tar.xz"
+    tar xf "node-$node_version-linux-$node_arch.tar.xz"
+
+    rm -rf "$HOME/.local/node"
+    mv "node-$node_version-linux-$node_arch" "$HOME/.local/node"
+
+    rm "node-$node_version-linux-$node_arch.tar.xz"
+    cd "$curdir"
+fi
 
 # --- NeoVim (rootless) ---
 if ! command -v nvim &>/dev/null; then
