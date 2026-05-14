@@ -201,7 +201,14 @@ fi
 gh_latest() { curl -fsSL "https://api.github.com/repos/$1/releases/latest" | jq -r ".tag_name | ltrimstr(\"${2:-}\")"; }
 
 # --- NeoVim (rootless) ---
-if ! command -v nvim &>/dev/null; then
+nvim_version_ok() {
+  local ver major minor
+  ver=$(nvim --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+  [[ -z "$ver" ]] && return 1
+  IFS='.' read -r major minor _ <<< "$ver"
+  (( major > 0 || minor >= 11 ))
+}
+if ! nvim_version_ok; then
   echo "Downloading NeoVim for linux/${ARCH_NVIM}..."
   curl -fsSL \
     "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-${ARCH_NVIM}.tar.gz" \
