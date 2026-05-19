@@ -30,6 +30,13 @@ scoop install nerd-fonts/Monofur-NF
 # --- Ghostscript (ImageMagick PDF support) ---
 scoop install ghostscript
 
+# --- XDG_CONFIG_HOME: redirect to ~/.config so nvim and other XDG-aware tools find chezmoi-managed config ---
+$xdgConfigHome = "$env:USERPROFILE\.config"
+if ([System.Environment]::GetEnvironmentVariable("XDG_CONFIG_HOME", "User") -ne $xdgConfigHome) {
+    [System.Environment]::SetEnvironmentVariable("XDG_CONFIG_HOME", $xdgConfigHome, "User")
+    $env:XDG_CONFIG_HOME = $xdgConfigHome
+}
+
 # --- ~/.local/bin on PATH (shared with MSYS2/zsh) ---
 $localBin = "$env:USERPROFILE\.local\bin"
 New-Item -ItemType Directory -Force -Path $localBin | Out-Null
