@@ -15,6 +15,9 @@ export CLICOLOR=1
 # Hint for tools that inspect terminal background color (0 = dark).
 export COLORFGBG="${COLORFGBG:-7;0}"
 
+# Allow interactive comments
+setopt INTERACTIVE_COMMENTS
+
 # Completion
 autoload -Uz compinit
 compinit -C
