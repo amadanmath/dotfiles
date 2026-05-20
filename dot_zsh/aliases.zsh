@@ -4,7 +4,13 @@ ls --color=auto /dev/null &>/dev/null 2>&1 && alias ls='ls --color=auto'
 
 command -v nvim &>/dev/null && alias vim=nvim
 
-command -v kitten &>/dev/null && alias ssh="kitten ssh"
+ssh() {
+  if [[ -n "$KITTY_PID" ]] && command -v kitten >/dev/null 2>&1; then
+    kitten ssh "$@"
+  else
+    command ssh "$@"
+  fi
+}
 
 sshcd() {
   local host="${1%:*}"
