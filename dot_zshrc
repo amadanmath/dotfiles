@@ -18,6 +18,13 @@ export COLORFGBG="${COLORFGBG:-7;0}"
 # Allow interactive comments
 setopt INTERACTIVE_COMMENTS
 
+# History
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_ALL_DUPS
+
 # Completion
 autoload -Uz compinit
 compinit -C
