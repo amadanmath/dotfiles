@@ -63,6 +63,8 @@ fi
 
 # Starship prompt — overrides any prompt set by RVM etc.
 command -v starship &>/dev/null && eval "$(starship init zsh)"
+# Make the input line stand out
+zle_highlight=(default:'bold,fg=yellow')
 
 # direnv — must come after anything that manipulates the prompt.
 command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
