@@ -18,13 +18,6 @@ export COLORFGBG="${COLORFGBG:-7;0}"
 # Allow interactive comments
 setopt INTERACTIVE_COMMENTS
 
-# History
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
-setopt SHARE_HISTORY
-setopt HIST_IGNORE_ALL_DUPS
-
 # Completion
 autoload -Uz compinit
 compinit -C
@@ -68,3 +61,11 @@ zle_highlight=(default:'bold,fg=yellow')
 
 # direnv — must come after anything that manipulates the prompt.
 command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
+
+# pnpm
+export PNPM_HOME="/Users/amadan/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
