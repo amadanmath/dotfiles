@@ -36,7 +36,7 @@ vim.opt.foldopen:append({ "jump" })
 vim.opt.wildignore:append({ "tags", "*.pyc", "__pycache__", "*/node_modules/*" })
 
 -- In SSH sessions, forward clipboard via OSC 52 back to the local terminal.
-if vim.env.SSH_TTY and vim.env.TERM == "xterm-kitty" then
+if vim.env.SSH_TTY then
   vim.g.clipboard = {
     name  = "OSC 52",
     copy  = { ["+"] = require("vim.ui.clipboard.osc52").copy("+"),  ["*"] = require("vim.ui.clipboard.osc52").copy("*") },

@@ -57,13 +57,21 @@ if [[ -z ${has_formula[neovim]:-} ]]; then
   brew install neovim
 fi
 
-{{- if not has "AIST" .location }}
+{{- if has "iTerm2" .features }}
+# --- iTerm2 terminal ---
+if [[ -z ${has_cask[iterm2]:-} ]]; then
+  echo "Installing iTerm2 terminal via Homebrew..."
+  brew install --cask iterm2
+fi
+{{- else if has "Kitty" .features }}
 # --- Kitty terminal ---
 if [[ -z ${has_cask[kitty]:-} ]]; then
   echo "Installing Kitty terminal via Homebrew..."
   brew install --cask kitty
 fi
+{{- end }}
 
+{{- if not (has "AIST" .location) }}
 # --- BitWarden desktop app ---
 if [[ -z ${has_cask[bitwarden]:-} ]]; then
   echo "Installing BitWarden desktop via Homebrew..."
