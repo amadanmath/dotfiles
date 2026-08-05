@@ -2,7 +2,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-
 {{ if eq .chezmoi.os "darwin" -}}
 
 # --- Xcode Command Line Tools ---
@@ -58,6 +57,7 @@ if [[ -z ${has_formula[neovim]:-} ]]; then
   brew install neovim
 fi
 
+{{- if not has "AIST" .location }}
 # --- Kitty terminal ---
 if [[ -z ${has_cask[kitty]:-} ]]; then
   echo "Installing Kitty terminal via Homebrew..."
@@ -75,6 +75,7 @@ if [[ -z ${has_formula[bitwarden-cli]:-} ]]; then
   echo "Installing BitWarden CLI via Homebrew..."
   brew install bitwarden-cli
 fi
+{{- end }}
 
 # --- AWS CLI ---
 if [[ -z ${has_formula[awscli]:-} ]]; then
@@ -398,4 +399,6 @@ if [[ ! -d "$HOME/.rvm" ]]; then
   echo "Installing RVM..."
   curl -sSL https://get.rvm.io | bash -s stable
 fi
+
+# vim: sw=4
 {{ end -}}
